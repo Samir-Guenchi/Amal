@@ -1,0 +1,43 @@
+# Frontend Requirements for Amal Web Application
+# =============================================
+
+# System Requirements
+# -------------------
+# - Node.js >= 18.0.0
+# - npm >= 9.0.0
+# - Modern web browser (Chrome, Firefox, Safari, Edge)
+
+# Installation
+# ------------
+# Run: npm install
+
+# Dependencies (from package.json)
+# --------------------------------
+# react@^18.2.0              - UI library
+# react-dom@^18.2.0          - React DOM renderer
+# react-router-dom@^6.20.0   - Client-side routing
+# zustand@^4.4.7             - State management
+# lucide-react@^0.294.0      - Icon library
+
+# Dev Dependencies
+# ----------------
+# @types/react@^18.2.37      - React TypeScript types
+# @types/react-dom@^18.2.15  - React DOM TypeScript types
+# @vitejs/plugin-react@^4.2.0 - Vite React plugin
+# autoprefixer@^10.4.16      - PostCSS autoprefixer
+# postcss@^8.4.31            - CSS processor
+# tailwindcss@^3.3.5         - Utility-first CSS
+# typescript@^5.2.2          - TypeScript compiler
+# vite@^5.0.0                - Build tool
+
+# Environment Variables
+# ---------------------
+# VITE_API_URL=http://localhost:8000  - Backend API URL
+
+# Quick Start
+# -----------
+# 1. cd frontend
+# 2. npm install
+# 3. cp .env.example .env (or create .env with VITE_API_URL)
+# 4. npm run dev
+# 5. Open http://localhost:3000
