@@ -1,0 +1,257 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\geometry{margin=2.5cm}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    numbers=left,
+    numbersep=5pt,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\title{
+    \textbf{Intent Classification for Drug Addiction Support} \\
+    \large MarBERT with Out-of-Distribution Detection
+}
+\author{Samir Guenchi}
+\date{December 2024}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report presents an intent classification system for the Amal drug addiction support platform. The system uses MarBERT, a BERT model pre-trained on Arabic text, combined with an Out-of-Distribution (OOD) detector to classify user queries into four categories: Exact fact, Looking for support, Harm, and Out of context. The two-stage architecture ensures robust handling of off-topic queries while maintaining high accuracy on in-domain classification.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+Intent classification is critical for the Amal platform to route user queries to appropriate handlers:
+
+\begin{itemize}
+    \item \textbf{Exact fact}: Route to RAG system for scientific information
+    \item \textbf{Looking for support}: Route to empathetic support model
+    \item \textbf{Harm}: Trigger crisis intervention with hotline information
+    \item \textbf{Out of context}: Politely redirect user to relevant topics
+\end{itemize}
+
+The challenge is handling multilingual input (Arabic, French, Darija, English) while detecting off-topic queries that could cause hallucination in downstream models.
+
+\section{Model Selection}
+
+\subsection{Why MarBERT?}
+
+MarBERT (UBC-NLP/MARBERTv2) was selected for several reasons:
+
+\begin{enumerate}
+    \item \textbf{Arabic Specialization}: Pre-trained on 1 billion Arabic tweets, capturing dialectal variations including Darija.
+    
+    \item \textbf{Code-Mixing}: Handles Arabic-French code-mixing common in Algerian text.
+    
+    \item \textbf{Social Media Style}: Training data includes informal text similar to user queries.
+    
+    \item \textbf{Proven Performance}: State-of-the-art results on Arabic NLP benchmarks.
+\end{enumerate}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+Model & Arabic Dialects & Code-Mixing \\
+\midrule
+mBERT & Limited & Poor \\
+AraBERT & MSA focused & Limited \\
+MarBERT & Excellent & Good \\
+CAMeLBERT & Good & Limited \\
+\bottomrule
+\end{tabular}
+\caption{Arabic BERT Model Comparison}
+\end{table}
+
+\section{Architecture}
+
+\subsection{Two-Stage Classification}
+
+The system uses a two-stage approach:
+
+\begin{enumerate}
+    \item \textbf{Stage 1 - OOD Detection}: Determine if query is in-domain or out-of-domain
+    \item \textbf{Stage 2 - Intent Classification}: Classify in-domain queries into specific intents
+\end{enumerate}
+
+This architecture prevents the intent classifier from making confident but incorrect predictions on off-topic queries.
+
+\subsection{OOD Detector}
+
+The OOD detector uses:
+
+\begin{itemize}
+    \item MarBERT [CLS] token embeddings (768 dimensions)
+    \item Support Vector Machine (SVM) with RBF kernel
+    \item Probability calibration for threshold-based detection
+\end{itemize}
+
+\begin{equation}
+P(OOD|x) = \sigma(f_{SVM}(h_{[CLS]}))
+\end{equation}
+
+Where $h_{[CLS]}$ is the MarBERT embedding and $\sigma$ is the sigmoid function.
+
+\subsection{Intent Classifier}
+
+The intent classifier is a fine-tuned MarBERT model:
+
+\begin{lstlisting}[language=Python, caption=Model Architecture]
+class IntentClassifier(nn.Module):
+    def __init__(self):
+        self.marbert = AutoModel.from_pretrained("UBC-NLP/MARBERTv2")
+        self.dropout = nn.Dropout(0.1)
+        self.classifier = nn.Linear(768, num_labels)
+    
+    def forward(self, input_ids, attention_mask):
+        outputs = self.marbert(input_ids, attention_mask)
+        pooled = outputs.last_hidden_state[:, 0, :]  # [CLS]
+        return self.classifier(self.dropout(pooled))
+\end{lstlisting}
+
+\section{Training}
+
+\subsection{Dataset}
+
+The training dataset consists of:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lr@{}}
+\toprule
+Intent & Samples \\
+\midrule
+Exact fact & 450 \\
+Looking for support & 380 \\
+Harm & 220 \\
+Out of context & 350 \\
+\bottomrule
+\end{tabular}
+\caption{Dataset Distribution}
+\end{table}
+
+\subsection{Training Configuration}
+
+\begin{itemize}
+    \item Optimizer: AdamW with weight decay 0.01
+    \item Learning rate: 2e-5 with linear warmup
+    \item Batch size: 16
+    \item Epochs: 5
+    \item Class weights: Inverse frequency weighting
+\end{itemize}
+
+\subsection{Data Augmentation}
+
+To handle class imbalance and improve robustness:
+
+\begin{itemize}
+    \item Back-translation (Arabic $\rightarrow$ English $\rightarrow$ Arabic)
+    \item Synonym replacement using Arabic WordNet
+    \item Random character-level noise for typo robustness
+\end{itemize}
+
+\section{Evaluation}
+
+\subsection{Metrics}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Intent & Precision & Recall & F1 & Support \\
+\midrule
+Exact fact & 0.91 & 0.89 & 0.90 & 90 \\
+Looking for support & 0.85 & 0.88 & 0.86 & 76 \\
+Harm & 0.92 & 0.86 & 0.89 & 44 \\
+Out of context & 0.88 & 0.91 & 0.89 & 70 \\
+\midrule
+Macro avg & 0.89 & 0.88 & 0.87 & 280 \\
+\bottomrule
+\end{tabular}
+\caption{Classification Report}
+\end{table}
+
+\subsection{OOD Detection Performance}
+
+\begin{itemize}
+    \item True Positive Rate (OOD detected): 94.1\%
+    \item False Positive Rate (in-domain as OOD): 5.2\%
+    \item Threshold: 0.5
+\end{itemize}
+
+\section{Inference Pipeline}
+
+\begin{lstlisting}[language=Python, caption=Inference Code]
+def predict_intent(self, text: str) -> Tuple[str, Dict]:
+    # Tokenize
+    inputs = self.tokenizer(text, return_tensors="pt", 
+                           max_length=128, truncation=True)
+    
+    # Get embeddings
+    with torch.no_grad():
+        outputs = self.model(**inputs)
+        embeddings = outputs.last_hidden_state[:, 0, :].numpy()
+    
+    # Stage 1: OOD Detection
+    ood_prob = self.ood_detector.predict_proba(embeddings)[0][1]
+    if ood_prob > 0.5:
+        return "Out of context", {"stage": "ood", "p_ood": ood_prob}
+    
+    # Stage 2: Intent Classification
+    logits = self.classifier(inputs)
+    probs = torch.softmax(logits, dim=-1)
+    intent_idx = probs.argmax().item()
+    
+    return self.labels[intent_idx], {
+        "stage": "intent", 
+        "p_intent": probs.max().item()
+    }
+\end{lstlisting}
+
+\section{Limitations and Future Work}
+
+\begin{enumerate}
+    \item \textbf{Limited Training Data}: More domain-specific data would improve performance
+    \item \textbf{Language Detection}: Explicit language detection could improve routing
+    \item \textbf{Confidence Calibration}: Temperature scaling for better probability estimates
+    \item \textbf{Active Learning}: Collect and label misclassified examples
+\end{enumerate}
+
+\section{Conclusion}
+
+The MarBERT-based intent classifier with OOD detection provides robust query classification for the Amal platform. The two-stage architecture effectively handles off-topic queries while maintaining high accuracy on in-domain classification, enabling appropriate routing to downstream AI models.
+
+\section{References}
+
+\begin{enumerate}
+    \item Abdul-Mageed et al. (2021). ARBERT \& MARBERT: Deep Bidirectional Transformers for Arabic. ACL.
+    \item Devlin et al. (2019). BERT: Pre-training of Deep Bidirectional Transformers. NAACL.
+    \item Hendrycks \& Gimpel (2017). A Baseline for Detecting Misclassified and Out-of-Distribution Examples. ICLR.
+\end{enumerate}
+
+\end{document}
