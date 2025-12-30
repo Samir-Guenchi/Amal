@@ -1,0 +1,368 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{enumitem}
+
+\geometry{margin=2.5cm}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\title{
+    \textbf{Amal Frontend Technical Report} \\
+    \large Framework Selection and Architecture Justification \\
+    \vspace{0.5cm}
+    \normalsize A Cross-Platform Multilingual LLM \& RAG System for Drug Addiction Support
+}
+\author{Samir Guenchi}
+\date{December 2024}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report presents the technical decisions and framework selections for the Amal web frontend application. Amal is a multilingual AI-powered platform designed to provide drug addiction awareness, prevention, and recovery support for users in Algeria. The frontend serves as the primary user interface, connecting users to AI models including intent classification (MarBERT), Retrieval-Augmented Generation (RAG), and support systems. This document justifies the choice of React, TypeScript, Vite, Tailwind CSS, and Zustand as the core technology stack.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+The Amal platform addresses a critical need in Algeria: accessible, multilingual support for individuals affected by drug addiction. The frontend application must meet several challenging requirements:
+
+\begin{itemize}
+    \item Support for four languages: Arabic, French, Darija (Algerian Arabic), and English
+    \item Right-to-left (RTL) layout support for Arabic scripts
+    \item Real-time AI chat interface with low latency
+    \item Professional, accessible design for users aged 20-60
+    \item Cross-browser compatibility and responsive design
+    \item Integration with Python FastAPI backend
+\end{itemize}
+
+\section{Framework Selection}
+
+\subsection{React 18.2}
+
+\textbf{Why React?}
+
+React was selected as the UI library for several compelling reasons:
+
+\begin{enumerate}
+    \item \textbf{Component-Based Architecture}: React's component model enables modular, reusable code. Each feature (chat, auth, resources) is encapsulated in its own module, improving maintainability.
+    
+    \item \textbf{Virtual DOM Performance}: React's virtual DOM efficiently updates only changed elements, crucial for the real-time chat interface where messages update frequently.
+    
+    \item \textbf{Ecosystem Maturity}: React has the largest ecosystem of any frontend framework, with extensive libraries for routing, state management, and internationalization.
+    
+    \item \textbf{RTL Support}: React's declarative nature makes implementing RTL layouts straightforward through CSS-in-JS or utility classes.
+    
+    \item \textbf{Developer Experience}: Hot module replacement, excellent DevTools, and comprehensive documentation accelerate development.
+\end{enumerate}
+
+\textbf{Alternatives Considered:}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+Framework & Pros & Why Not Chosen \\
+\midrule
+Vue.js & Simpler learning curve & Smaller ecosystem for RTL/i18n \\
+Angular & Full framework & Heavier, slower development \\
+Svelte & Excellent performance & Less mature ecosystem \\
+\bottomrule
+\end{tabular}
+\caption{Frontend Framework Comparison}
+\end{table}
+
+\subsection{TypeScript 5.2}
+
+\textbf{Why TypeScript?}
+
+TypeScript provides static typing for JavaScript, offering:
+
+\begin{enumerate}
+    \item \textbf{Type Safety}: Catches errors at compile time rather than runtime, critical for API integration where response shapes must be validated.
+    
+    \item \textbf{IDE Support}: IntelliSense, auto-completion, and refactoring tools significantly improve developer productivity.
+    
+    \item \textbf{Documentation}: Types serve as inline documentation, making the codebase self-documenting.
+    
+    \item \textbf{Maintainability}: As the project grows, TypeScript prevents regression bugs and makes refactoring safer.
+\end{enumerate}
+
+\begin{lstlisting}[language=JavaScript, caption=Type-safe API Response]
+interface ChatResponse {
+  intent: string;
+  confidence: {
+    stage: string;
+    p_ood?: number;
+    p_intent?: number;
+  };
+  response: string;
+  language: string;
+  source: string;
+}
+\end{lstlisting}
+
+\subsection{Vite 5.0}
+
+\textbf{Why Vite?}
+
+Vite is a next-generation build tool that offers significant advantages:
+
+\begin{enumerate}
+    \item \textbf{Instant Server Start}: Uses native ES modules, starting the dev server in milliseconds regardless of project size.
+    
+    \item \textbf{Lightning-Fast HMR}: Hot Module Replacement updates in under 50ms, maintaining developer flow.
+    
+    \item \textbf{Optimized Production Builds}: Uses Rollup for production, producing highly optimized bundles with code splitting.
+    
+    \item \textbf{First-Class TypeScript Support}: No additional configuration required for TypeScript.
+    
+    \item \textbf{Proxy Configuration}: Built-in proxy support simplifies API integration during development.
+\end{enumerate}
+
+\textbf{Comparison with Alternatives:}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+Tool & Dev Server Start & HMR Speed & Bundle Size \\
+\midrule
+Vite & <300ms & <50ms & Optimized \\
+Create React App & 10-30s & 1-3s & Larger \\
+Webpack (custom) & 5-15s & 500ms-2s & Configurable \\
+\bottomrule
+\end{tabular}
+\caption{Build Tool Performance Comparison}
+\end{table}
+
+\subsection{Tailwind CSS 3.3}
+
+\textbf{Why Tailwind CSS?}
+
+Tailwind CSS is a utility-first CSS framework that provides:
+
+\begin{enumerate}
+    \item \textbf{Rapid Development}: Utility classes eliminate context-switching between HTML and CSS files.
+    
+    \item \textbf{Consistent Design}: Predefined spacing, colors, and typography scales ensure visual consistency.
+    
+    \item \textbf{RTL Support}: The \texttt{rtl:} variant enables easy right-to-left styling for Arabic content.
+    
+    \item \textbf{Dark Mode}: Built-in dark mode support with the \texttt{dark:} variant.
+    
+    \item \textbf{Small Production Bundle}: PurgeCSS removes unused styles, resulting in minimal CSS payload.
+    
+    \item \textbf{Responsive Design}: Mobile-first breakpoints (\texttt{sm:}, \texttt{md:}, \texttt{lg:}) simplify responsive layouts.
+\end{enumerate}
+
+\begin{lstlisting}[language=HTML, caption=Tailwind RTL and Dark Mode Example]
+<div class="bg-white dark:bg-zinc-900 
+            text-zinc-900 dark:text-white
+            rtl:text-right ltr:text-left
+            p-4 rounded-lg">
+  Multilingual content
+</div>
+\end{lstlisting}
+
+\subsection{Zustand 4.4}
+
+\textbf{Why Zustand?}
+
+Zustand is a lightweight state management library chosen for:
+
+\begin{enumerate}
+    \item \textbf{Simplicity}: Minimal boilerplate compared to Redux. A store is created with a single function call.
+    
+    \item \textbf{Performance}: Uses React's useSyncExternalStore for optimal re-renders.
+    
+    \item \textbf{TypeScript Integration}: Excellent type inference without complex generic patterns.
+    
+    \item \textbf{Persistence}: Built-in middleware for localStorage persistence (used for auth tokens).
+    
+    \item \textbf{Bundle Size}: Only 1.1KB gzipped, compared to Redux's 7KB+.
+\end{enumerate}
+
+\begin{lstlisting}[language=JavaScript, caption=Zustand Store Example]
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+export const useAuthStore = create(
+  persist(
+    (set) => ({
+      user: null,
+      accessToken: null,
+      login: async (email, password) => {
+        const response = await api.login(email, password);
+        set({ user: response.user, accessToken: response.access_token });
+      },
+    }),
+    { name: 'amal-auth' }
+  )
+);
+\end{lstlisting}
+
+\subsection{React Router 6.20}
+
+\textbf{Why React Router?}
+
+React Router is the de facto standard for React routing:
+
+\begin{enumerate}
+    \item \textbf{Declarative Routing}: Routes are defined as React components, integrating naturally with the component tree.
+    
+    \item \textbf{Nested Routes}: Supports complex layouts with nested route configurations.
+    
+    \item \textbf{Data Loading}: Built-in loaders and actions for data fetching (v6.4+).
+    
+    \item \textbf{Type Safety}: Full TypeScript support for route parameters.
+\end{enumerate}
+
+\subsection{Lucide React}
+
+\textbf{Why Lucide React?}
+
+Lucide provides professional, consistent icons:
+
+\begin{enumerate}
+    \item \textbf{Tree-Shakeable}: Only imports used icons, minimizing bundle size.
+    
+    \item \textbf{Customizable}: Size, color, and stroke width are easily configurable.
+    
+    \item \textbf{Accessibility}: Icons include proper ARIA attributes.
+    
+    \item \textbf{No Emojis}: Per project requirements, Lucide provides professional iconography.
+\end{enumerate}
+
+\section{Architecture Decisions}
+
+\subsection{Feature-Based Structure}
+
+The codebase follows a feature-based architecture:
+
+\begin{lstlisting}[language=bash, caption=Project Structure]
+src/
+  features/
+    auth/           # Authentication feature
+      pages/        # LoginPage, SignupPage, ForgotPasswordPage
+      store/        # authStore.ts
+    chat/           # AI Chat feature
+      pages/        # ChatPage
+    home/           # Landing page
+    resources/      # Educational content
+  components/       # Shared components
+  services/         # API layer
+  store/            # Global stores (theme, language)
+\end{lstlisting}
+
+\textbf{Benefits:}
+\begin{itemize}
+    \item Features are self-contained and can be developed independently
+    \item Easy to locate code related to a specific feature
+    \item Supports team collaboration with clear ownership boundaries
+\end{itemize}
+
+\subsection{API Service Layer}
+
+All backend communication is centralized in \texttt{services/api.ts}:
+
+\begin{itemize}
+    \item Single source of truth for API endpoints
+    \item Consistent error handling
+    \item Type-safe request/response interfaces
+    \item Easy to mock for testing
+\end{itemize}
+
+\subsection{Lazy Login Pattern}
+
+The application implements "lazy login" where:
+
+\begin{itemize}
+    \item Users can access the chat without authentication
+    \item Authentication is optional for data synchronization
+    \item Reduces friction for users seeking immediate help
+\end{itemize}
+
+\section{Performance Considerations}
+
+\begin{enumerate}
+    \item \textbf{Code Splitting}: Vite automatically splits code by route, loading only necessary JavaScript.
+    
+    \item \textbf{CSS Purging}: Tailwind removes unused styles in production builds.
+    
+    \item \textbf{Optimistic Updates}: UI updates immediately while API calls complete in background.
+    
+    \item \textbf{Memoization}: React.memo and useMemo prevent unnecessary re-renders.
+\end{enumerate}
+
+\section{Accessibility}
+
+The frontend prioritizes accessibility:
+
+\begin{itemize}
+    \item Semantic HTML elements
+    \item ARIA labels for interactive elements
+    \item Keyboard navigation support
+    \item Sufficient color contrast ratios
+    \item Focus indicators for all interactive elements
+\end{itemize}
+
+\section{Conclusion}
+
+The selected technology stack provides an optimal balance of:
+
+\begin{itemize}
+    \item \textbf{Developer Experience}: Fast iteration with Vite, type safety with TypeScript
+    \item \textbf{Performance}: Optimized bundles, efficient rendering
+    \item \textbf{Maintainability}: Feature-based architecture, strong typing
+    \item \textbf{User Experience}: Fast load times, responsive design, RTL support
+    \item \textbf{Scalability}: Modular structure supports future feature additions
+\end{itemize}
+
+This stack enables rapid development while maintaining code quality, making it ideal for the Amal platform's mission of providing accessible drug addiction support to users across Algeria.
+
+\section{References}
+
+\begin{enumerate}
+    \item React Documentation: \url{https://react.dev}
+    \item TypeScript Handbook: \url{https://www.typescriptlang.org/docs}
+    \item Vite Guide: \url{https://vitejs.dev/guide}
+    \item Tailwind CSS Documentation: \url{https://tailwindcss.com/docs}
+    \item Zustand GitHub: \url{https://github.com/pmndrs/zustand}
+    \item React Router Documentation: \url{https://reactrouter.com}
+\end{enumerate}
+
+\end{document}

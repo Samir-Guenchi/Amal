@@ -1,0 +1,196 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+
+\geometry{margin=2.5cm}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\title{
+    \textbf{Amal Backend Technical Report} \\
+    \large API Server Architecture and Framework Justification
+}
+\author{Samir Guenchi}
+\date{December 2024}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report presents the technical architecture of the Amal backend server, which orchestrates multiple AI models for drug addiction support. The backend serves as the central hub connecting frontend applications to intent classification (MarBERT), Retrieval-Augmented Generation (RAG), and support models. This document justifies the selection of FastAPI, Pydantic, and JWT-based authentication.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+The Amal backend must handle:
+\begin{itemize}
+    \item Real-time AI inference requests
+    \item Multilingual text processing (Arabic, French, Darija, English)
+    \item User authentication and session management
+    \item Integration with multiple ML models
+    \item High concurrency from web and mobile clients
+\end{itemize}
+
+\section{Framework Selection}
+
+\subsection{FastAPI}
+
+FastAPI was selected as the web framework for several reasons:
+
+\begin{enumerate}
+    \item \textbf{Performance}: FastAPI is one of the fastest Python frameworks, comparable to Node.js and Go. It uses Starlette for the web parts and Pydantic for data validation.
+    
+    \item \textbf{Async Support}: Native async/await support enables efficient handling of concurrent requests, crucial for AI inference which can be I/O bound.
+    
+    \item \textbf{Automatic Documentation}: OpenAPI (Swagger) and ReDoc documentation are generated automatically from type hints.
+    
+    \item \textbf{Type Safety}: Python type hints provide IDE support and runtime validation.
+    
+    \item \textbf{ML Integration}: Excellent compatibility with PyTorch, Transformers, and other ML libraries.
+\end{enumerate}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+Framework & Requests/sec & Async & Auto Docs \\
+\midrule
+FastAPI & 30,000+ & Yes & Yes \\
+Flask & 5,000 & No & No \\
+Django & 8,000 & Partial & No \\
+\bottomrule
+\end{tabular}
+\caption{Python Web Framework Comparison}
+\end{table}
+
+\subsection{Pydantic}
+
+Pydantic provides data validation and serialization:
+
+\begin{enumerate}
+    \item \textbf{Request Validation}: Automatically validates incoming JSON against defined schemas.
+    \item \textbf{Response Serialization}: Ensures consistent API responses.
+    \item \textbf{Type Coercion}: Automatically converts compatible types.
+    \item \textbf{Error Messages}: Clear validation error messages for debugging.
+\end{enumerate}
+
+\begin{lstlisting}[language=Python, caption=Pydantic Model Example]
+class ChatRequest(BaseModel):
+    message: str
+    conversation_id: Optional[str] = None
+
+class ChatResponse(BaseModel):
+    intent: str
+    confidence: Dict
+    response: str
+    language: str
+    source: str
+\end{lstlisting}
+
+\subsection{JWT Authentication}
+
+JSON Web Tokens (JWT) were chosen for authentication:
+
+\begin{enumerate}
+    \item \textbf{Stateless}: No server-side session storage required.
+    \item \textbf{Scalable}: Works across multiple server instances.
+    \item \textbf{Mobile-Friendly}: Easy to store and transmit from mobile apps.
+    \item \textbf{Refresh Tokens}: Long-lived refresh tokens reduce login frequency.
+\end{enumerate}
+
+\section{Architecture}
+
+\subsection{Orchestrator Pattern}
+
+The \texttt{AmalBackend} class implements the orchestrator pattern:
+
+\begin{lstlisting}[language=Python, caption=Orchestrator Flow]
+def process_query(self, query: str) -> Dict:
+    # 1. Detect language
+    language = self.detect_language(query)
+    
+    # 2. Classify intent
+    intent, confidence = self.intent_backend.predict_intent(query)
+    
+    # 3. Route to appropriate handler
+    if intent == "Out of context":
+        response = self.out_of_context_response(language)
+    elif intent == "Harm":
+        response = self.crisis_response(language)
+    elif intent == "Exact fact":
+        response = self.rag_backend.generate_response(query, language)
+    elif intent == "Looking for support":
+        response = self.support_response(language)
+    
+    return {"intent": intent, "response": response, ...}
+\end{lstlisting}
+
+\subsection{CORS Configuration}
+
+Cross-Origin Resource Sharing (CORS) is configured to allow requests from web and mobile clients:
+
+\begin{lstlisting}[language=Python, caption=CORS Middleware]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Configure for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+\end{lstlisting}
+
+\section{Security Considerations}
+
+\begin{enumerate}
+    \item \textbf{Password Hashing}: SHA-256 with random salt
+    \item \textbf{Token Expiration}: Access tokens expire in 24 hours
+    \item \textbf{Refresh Tokens}: 30-day expiration with rotation
+    \item \textbf{Input Validation}: Pydantic validates all inputs
+\end{enumerate}
+
+\section{Performance Optimizations}
+
+\begin{enumerate}
+    \item \textbf{Model Preloading}: ML models loaded at startup
+    \item \textbf{Async Endpoints}: Non-blocking request handling
+    \item \textbf{Connection Pooling}: Efficient database connections
+\end{enumerate}
+
+\section{Conclusion}
+
+FastAPI provides the optimal balance of performance, developer experience, and ML integration for the Amal backend. The combination of Pydantic validation, JWT authentication, and the orchestrator pattern creates a robust, scalable API server.
+
+\section{References}
+
+\begin{enumerate}
+    \item FastAPI Documentation: \url{https://fastapi.tiangolo.com}
+    \item Pydantic Documentation: \url{https://docs.pydantic.dev}
+    \item JWT Introduction: \url{https://jwt.io/introduction}
+\end{enumerate}
+
+\end{document}

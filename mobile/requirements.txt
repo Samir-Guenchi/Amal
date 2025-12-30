@@ -1,0 +1,44 @@
+# Amal Mobile Requirements
+# ========================
+
+# System Requirements
+# -------------------
+# - Node.js >= 18.0.0
+# - npm >= 9.0.0
+# - Expo Go app (for physical device testing)
+
+# Installation
+# ------------
+# Run: npm install
+
+# Dependencies (from package.json)
+# --------------------------------
+# expo@~52.0.0                    - Expo SDK
+# react@18.3.1                    - React library
+# react-native@0.76.6             - React Native framework
+# @react-navigation/native@^7.0  - Navigation core
+# @react-navigation/bottom-tabs@^7.2 - Tab navigation
+# zustand@^4.4.7                  - State management
+# @react-native-async-storage/async-storage@1.23.1 - Local storage
+
+# Development
+# -----------
+# npx expo start                  - Start development server
+# Press 'a' for Android emulator
+# Press 'i' for iOS simulator
+# Scan QR with Expo Go for physical device
+
+# Physical Device Setup
+# ---------------------
+# 1. Find your computer's IP address:
+#    - Windows: ipconfig
+#    - Mac/Linux: ifconfig
+# 2. Update src/services/api.ts:
+#    const API_BASE_URL = 'http://YOUR_IP:8000';
+# 3. Ensure phone and computer are on same network
+
+# Building for Production
+# -----------------------
+# Android: npx expo build:android
+# iOS: npx expo build:ios
+# Or use EAS Build: eas build --platform all

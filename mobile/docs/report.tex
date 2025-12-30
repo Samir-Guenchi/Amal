@@ -1,0 +1,218 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+
+\geometry{margin=2.5cm}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    numbers=left,
+    numbersep=5pt,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\title{
+    \textbf{Amal Mobile Technical Report} \\
+    \large React Native Application Architecture
+}
+\author{Samir Guenchi}
+\date{December 2024}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report presents the technical decisions for the Amal mobile application, a cross-platform app providing drug addiction support for users in Algeria. The application uses React Native with Expo, enabling deployment to both Android and iOS from a single codebase. This document justifies the framework selections and architectural decisions.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+The Amal mobile application requirements include:
+\begin{itemize}
+    \item Cross-platform deployment (Android and iOS)
+    \item Multilingual support with RTL layouts
+    \item Real-time AI chat interface
+    \item Offline capability for basic features
+    \item Professional design for ages 20-60
+\end{itemize}
+
+\section{Framework Selection}
+
+\subsection{React Native}
+
+React Native was selected for cross-platform mobile development:
+
+\begin{enumerate}
+    \item \textbf{Code Sharing}: Single codebase for Android and iOS reduces development time by 40-50\%.
+    
+    \item \textbf{Native Performance}: Unlike hybrid frameworks, React Native compiles to native components.
+    
+    \item \textbf{React Ecosystem}: Leverages existing React knowledge and libraries from the web frontend.
+    
+    \item \textbf{Hot Reloading}: Instant feedback during development accelerates iteration.
+    
+    \item \textbf{Large Community}: Extensive libraries, documentation, and community support.
+\end{enumerate}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+Framework & Performance & Code Sharing & Learning Curve \\
+\midrule
+React Native & Near-native & 90\%+ & Medium \\
+Flutter & Native & 95\%+ & High \\
+Ionic & Web-based & 100\% & Low \\
+Native (Swift/Kotlin) & Native & 0\% & High \\
+\bottomrule
+\end{tabular}
+\caption{Mobile Framework Comparison}
+\end{table}
+
+\subsection{Expo SDK 52}
+
+Expo provides a managed workflow for React Native:
+
+\begin{enumerate}
+    \item \textbf{Zero Configuration}: No Xcode or Android Studio setup required for development.
+    
+    \item \textbf{OTA Updates}: Push updates without app store review.
+    
+    \item \textbf{Expo Go}: Test on physical devices instantly via QR code.
+    
+    \item \textbf{EAS Build}: Cloud-based builds for production releases.
+    
+    \item \textbf{SDK Libraries}: Pre-configured access to device features (camera, storage, etc.).
+\end{enumerate}
+
+\subsection{React Navigation 7}
+
+React Navigation handles screen navigation:
+
+\begin{enumerate}
+    \item \textbf{Native Feel}: Uses native navigation primitives on each platform.
+    \item \textbf{Type Safety}: Full TypeScript support for route parameters.
+    \item \textbf{Deep Linking}: URL-based navigation for external links.
+    \item \textbf{Tab Navigation}: Bottom tab bar with custom styling.
+\end{enumerate}
+
+\begin{lstlisting}[language=JavaScript, caption=Navigation Setup]
+const Tab = createBottomTabNavigator();
+
+function AppNavigator() {
+  return (
+    <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Chat" component={ChatScreen} />
+      <Tab.Screen name="Resources" component={ResourcesScreen} />
+      <Tab.Screen name="Settings" component={SettingsScreen} />
+    </Tab.Navigator>
+  );
+}
+\end{lstlisting}
+
+\subsection{Zustand with AsyncStorage}
+
+Zustand provides lightweight state management:
+
+\begin{enumerate}
+    \item \textbf{Minimal Boilerplate}: Simpler than Redux for React Native.
+    \item \textbf{Persistence}: AsyncStorage middleware for offline data.
+    \item \textbf{TypeScript}: Excellent type inference.
+\end{enumerate}
+
+\begin{lstlisting}[language=JavaScript, caption=Persistent Auth Store]
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  accessToken: null,
+  
+  signIn: async (email, password) => {
+    const response = await api.login(email, password);
+    await AsyncStorage.setItem('@auth', JSON.stringify(response));
+    set({ user: response.user, accessToken: response.access_token });
+  },
+}));
+\end{lstlisting}
+
+\section{Architecture Decisions}
+
+\subsection{Lazy Login Pattern}
+
+The app implements lazy login for accessibility:
+
+\begin{itemize}
+    \item Users can access chat without authentication
+    \item Authentication is optional for data synchronization
+    \item Reduces friction for users seeking immediate help
+\end{itemize}
+
+\subsection{RTL Support}
+
+Arabic language support requires RTL layouts:
+
+\begin{lstlisting}[language=JavaScript, caption=RTL Configuration]
+import { I18nManager } from 'react-native';
+
+// Enable RTL for Arabic
+if (language === 'ar' || language === 'dz') {
+  I18nManager.forceRTL(true);
+}
+\end{lstlisting}
+
+\subsection{API Service Layer}
+
+Centralized API communication:
+
+\begin{lstlisting}[language=JavaScript, caption=API Service]
+const API_BASE_URL = 'http://192.168.x.x:8000';
+
+export async function sendChatMessage(message: string) {
+  const response = await fetch(`${API_BASE_URL}/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message }),
+  });
+  return response.json();
+}
+\end{lstlisting}
+
+\section{Performance Considerations}
+
+\begin{enumerate}
+    \item \textbf{FlatList}: Virtualized lists for chat messages
+    \item \textbf{Memoization}: React.memo for expensive components
+    \item \textbf{Image Optimization}: Cached and resized images
+    \item \textbf{Bundle Splitting}: Lazy loading for screens
+\end{enumerate}
+
+\section{Conclusion}
+
+React Native with Expo provides the optimal solution for Amal's mobile requirements. The combination of cross-platform development, native performance, and the React ecosystem enables rapid development while maintaining quality user experience across Android and iOS.
+
+\section{References}
+
+\begin{enumerate}
+    \item React Native Documentation: \url{https://reactnative.dev}
+    \item Expo Documentation: \url{https://docs.expo.dev}
+    \item React Navigation: \url{https://reactnavigation.org}
+    \item Zustand: \url{https://github.com/pmndrs/zustand}
+\end{enumerate}
+
+\end{document}

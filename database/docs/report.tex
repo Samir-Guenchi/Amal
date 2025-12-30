@@ -1,0 +1,256 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+
+\geometry{margin=2.5cm}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    numbers=left,
+    numbersep=5pt,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\title{
+    \textbf{Amal Database Architecture} \\
+    \large PostgreSQL Schema Design for Drug Addiction Support Platform
+}
+\author{Samir Guenchi}
+\date{December 2024}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report presents the database architecture for the Amal drug addiction support platform. The schema is designed using PostgreSQL with a focus on data integrity, security, and scalability. The design supports user management, conversation history, resource tracking, and analytics while maintaining HIPAA-inspired privacy considerations.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+The Amal database must support:
+
+\begin{itemize}
+    \item User authentication and profile management
+    \item Conversation history with AI models
+    \item Resource and center information
+    \item Analytics and usage tracking
+    \item Multi-language content storage
+\end{itemize}
+
+\section{Technology Selection}
+
+\subsection{Why PostgreSQL?}
+
+PostgreSQL was selected for several reasons:
+
+\begin{enumerate}
+    \item \textbf{ACID Compliance}: Full transaction support for data integrity
+    \item \textbf{JSON Support}: Native JSONB for flexible schema elements
+    \item \textbf{Full-Text Search}: Built-in multilingual text search
+    \item \textbf{Extensions}: pgcrypto for encryption, uuid-ossp for IDs
+    \item \textbf{Scalability}: Supports partitioning and replication
+    \item \textbf{Open Source}: No licensing costs
+\end{enumerate}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+Database & ACID & JSON & Full-Text \\
+\midrule
+PostgreSQL & Yes & Native & Excellent \\
+MySQL & Yes & Limited & Basic \\
+MongoDB & Partial & Native & Good \\
+SQLite & Yes & Extension & Limited \\
+\bottomrule
+\end{tabular}
+\caption{Database Comparison}
+\end{table}
+
+\section{Schema Design}
+
+\subsection{Core Tables}
+
+\subsubsection{Users Table}
+
+\begin{lstlisting}[language=SQL, caption=Users Table]
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    name VARCHAR(100),
+    preferred_language language_code DEFAULT 'ar',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_verified BOOLEAN DEFAULT FALSE,
+    is_active BOOLEAN DEFAULT TRUE
+);
+\end{lstlisting}
+
+\subsubsection{Conversations Table}
+
+\begin{lstlisting}[language=SQL, caption=Conversations Table]
+CREATE TABLE conversations (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_archived BOOLEAN DEFAULT FALSE
+);
+\end{lstlisting}
+
+\subsubsection{Messages Table}
+
+\begin{lstlisting}[language=SQL, caption=Messages Table]
+CREATE TABLE messages (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    conversation_id UUID REFERENCES conversations(id) ON DELETE CASCADE,
+    role message_role NOT NULL, -- 'user' or 'assistant'
+    content TEXT NOT NULL,
+    intent VARCHAR(50),
+    language language_code,
+    source VARCHAR(50),
+    confidence JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+\end{lstlisting}
+
+\subsection{Custom Types}
+
+\begin{lstlisting}[language=SQL, caption=Custom Domain Types]
+CREATE TYPE language_code AS ENUM ('ar', 'fr', 'en', 'dz');
+CREATE TYPE message_role AS ENUM ('user', 'assistant', 'system');
+CREATE TYPE intent_type AS ENUM (
+    'exact_fact', 
+    'looking_for_support', 
+    'harm', 
+    'out_of_context'
+);
+\end{lstlisting}
+
+\section{Indexing Strategy}
+
+\subsection{Primary Indexes}
+
+\begin{lstlisting}[language=SQL, caption=Index Definitions]
+-- User lookup by email
+CREATE INDEX idx_users_email ON users(email);
+
+-- Messages by conversation (for chat history)
+CREATE INDEX idx_messages_conversation 
+    ON messages(conversation_id, created_at DESC);
+
+-- Analytics: messages by intent
+CREATE INDEX idx_messages_intent ON messages(intent);
+
+-- Full-text search on message content
+CREATE INDEX idx_messages_content_fts 
+    ON messages USING gin(to_tsvector('arabic', content));
+\end{lstlisting}
+
+\section{Security Considerations}
+
+\subsection{Row-Level Security}
+
+\begin{lstlisting}[language=SQL, caption=Row-Level Security]
+ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY user_conversations ON conversations
+    FOR ALL
+    USING (user_id = current_user_id());
+\end{lstlisting}
+
+\subsection{Data Encryption}
+
+\begin{itemize}
+    \item Passwords hashed with bcrypt (via application)
+    \item Sensitive fields encrypted with pgcrypto
+    \item TLS for connections in production
+\end{itemize}
+
+\section{Migration Strategy}
+
+\subsection{Migration Files}
+
+\begin{lstlisting}[caption=Migration Structure]
+migrations/
+  001_initial_schema.sql
+  002_add_analytics.sql
+  003_add_resources.sql
+\end{lstlisting}
+
+\subsection{Version Control}
+
+Each migration includes:
+\begin{itemize}
+    \item Up migration (apply changes)
+    \item Down migration (rollback)
+    \item Timestamp and description
+\end{itemize}
+
+\section{Docker Deployment}
+
+\begin{lstlisting}[language=yaml, caption=Docker Compose]
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: amal
+      POSTGRES_USER: amal_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./schema:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+\end{lstlisting}
+
+\section{Performance Optimization}
+
+\begin{enumerate}
+    \item \textbf{Connection Pooling}: PgBouncer for connection management
+    \item \textbf{Query Optimization}: EXPLAIN ANALYZE for slow queries
+    \item \textbf{Partitioning}: Messages table partitioned by month
+    \item \textbf{Vacuuming}: Automated vacuum for dead tuple cleanup
+\end{enumerate}
+
+\section{Backup Strategy}
+
+\begin{itemize}
+    \item Daily full backups with pg\_dump
+    \item Continuous WAL archiving for point-in-time recovery
+    \item Backup retention: 30 days
+    \item Tested restore procedures
+\end{itemize}
+
+\section{Conclusion}
+
+The PostgreSQL schema provides a robust foundation for the Amal platform. The design prioritizes data integrity, security, and performance while supporting the multilingual, AI-powered features of the application.
+
+\section{References}
+
+\begin{enumerate}
+    \item PostgreSQL Documentation: \url{https://www.postgresql.org/docs}
+    \item Database Design Best Practices: \url{https://wiki.postgresql.org/wiki/Don't_Do_This}
+\end{enumerate}
+
+\end{document}

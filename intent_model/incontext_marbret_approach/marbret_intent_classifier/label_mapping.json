@@ -1,0 +1,12 @@
+{
+  "label_to_id": {
+    "Exact fact": 0,
+    "Harm": 1,
+    "Looking for support": 2
+  },
+  "id_to_label": {
+    "0": "Exact fact",
+    "1": "Harm",
+    "2": "Looking for support"
+  }
+}
