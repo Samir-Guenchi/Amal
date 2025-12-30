@@ -1,0 +1,725 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[arabic,french,english]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+
+\geometry{margin=1in}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  language=SQL,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red}
+}
+
+\title{
+  \textbf{Amal Chat Platform} \\
+  \large Database Design Documentation \\
+  \vspace{0.5cm}
+  \includegraphics[width=0.2\textwidth]{logo.png} \\
+  \vspace{0.5cm}
+  Version 2.0
+}
+
+\author{
+  Database Architecture Team \\
+  \texttt{dba@amal.dz}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Executive Summary}
+
+This document provides comprehensive documentation for the Amal Chat Platform database schema. The database is designed to support an intelligent chatbot system with RAG (Retrieval-Augmented Generation) capabilities, support ticketing, and comprehensive audit logging.
+
+\subsection{Key Features}
+\begin{itemize}
+  \item Normalized to Third Normal Form (3NF)
+  \item PostgreSQL 14+ with pgvector extension
+  \item Optimized for Algeria timezone (Africa/Algiers)
+  \item Multi-language support (Arabic, French, English)
+  \item Vector similarity search for semantic retrieval
+  \item Comprehensive audit trail
+  \item SLA tracking for support tickets
+\end{itemize}
+
+\subsection{Database Statistics}
+\begin{itemize}
+  \item \textbf{Tables}: 18 core tables + 4 lookup tables
+  \item \textbf{Indexes}: 40+ optimized indexes
+  \item \textbf{Views}: 4 reporting views + 1 materialized view
+  \item \textbf{Triggers}: 6 automated triggers
+  \item \textbf{Functions}: 4 utility functions
+\end{itemize}
+
+\newpage
+
+\section{Database Architecture}
+
+\subsection{Normalization}
+
+The database schema follows Third Normal Form (3NF) principles:
+
+\begin{enumerate}
+  \item \textbf{First Normal Form (1NF)}: All tables have atomic values, no repeating groups
+  \item \textbf{Second Normal Form (2NF)}: All non-key attributes are fully functionally dependent on the primary key
+  \item \textbf{Third Normal Form (3NF)}: No transitive dependencies; all non-key attributes depend only on the primary key
+\end{enumerate}
+
+\subsection{Entity Relationship}
+
+The database consists of the following entity groups:
+
+\begin{itemize}
+  \item \textbf{User Management}: users, user\_preferences, user\_sessions, magic\_links
+  \item \textbf{Conversations}: conversations, messages, decision\_logs
+  \item \textbf{RAG System}: documents, document\_chunks
+  \item \textbf{Support System}: support\_tickets, ticket\_comments
+  \item \textbf{Audit \& Logging}: audit\_logs
+  \item \textbf{Reference Data}: conversation\_modes, conversation\_statuses, ticket\_categories, ticket\_priorities, ticket\_statuses
+\end{itemize}
+
+\newpage
+
+\section{Table Specifications}
+
+\subsection{Users Table}
+
+\textbf{Purpose}: Store user account information with authentication credentials and preferences.
+
+\begin{longtable}{|p{3cm}|p{2.5cm}|p{7cm}|}
+\hline
+\textbf{Column} & \textbf{Type} & \textbf{Description} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Column} & \textbf{Type} & \textbf{Description} \\
+\hline
+\endhead
+id & UUID & Primary key, auto-generated \\
+\hline
+email & email\_address & Unique email address (custom domain type) \\
+\hline
+password\_hash & VARCHAR(255) & Bcrypt hashed password (nullable for magic link users) \\
+\hline
+name & VARCHAR(255) & User's display name \\
+\hline
+locale & locale\_code & User's preferred locale (ar-DZ, fr-FR, en-US) \\
+\hline
+timezone & timezone\_name & User's timezone (default: Africa/Algiers) \\
+\hline
+consent\_data\_storage & BOOLEAN & GDPR consent flag \\
+\hline
+consent\_timestamp & TIMESTAMPTZ & When consent was given \\
+\hline
+consent\_ip\_address & INET & IP address when consent was given \\
+\hline
+is\_active & BOOLEAN & Account active status \\
+\hline
+is\_verified & BOOLEAN & Email verification status \\
+\hline
+email\_verified\_at & TIMESTAMPTZ & Email verification timestamp \\
+\hline
+failed\_login\_attempts & INTEGER & Failed login counter for security \\
+\hline
+locked\_until & TIMESTAMPTZ & Account lock expiration \\
+\hline
+last\_login\_at & TIMESTAMPTZ & Last successful login \\
+\hline
+last\_login\_ip & INET & Last login IP address \\
+\hline
+created\_at & TIMESTAMPTZ & Account creation timestamp \\
+\hline
+updated\_at & TIMESTAMPTZ & Last update timestamp (auto-updated) \\
+\hline
+deleted\_at & TIMESTAMPTZ & Soft delete timestamp \\
+\hline
+\end{longtable}
+
+\textbf{Constraints}:
+\begin{itemize}
+  \item CHECK: If consent\_data\_storage is true, consent\_timestamp must not be null
+  \item UNIQUE: email (where deleted\_at IS NULL)
+\end{itemize}
+
+\textbf{Indexes}:
+\begin{itemize}
+  \item idx\_users\_email: B-tree index on email (partial: WHERE deleted\_at IS NULL)
+  \item idx\_users\_active: B-tree index on is\_active
+  \item idx\_users\_created\_at: B-tree index on created\_at DESC
+\end{itemize}
+
+\newpage
+
+\subsection{Conversations Table}
+
+\textbf{Purpose}: Store chat conversations between users and the AI assistant.
+
+\begin{longtable}{|p{3cm}|p{2.5cm}|p{7cm}|}
+\hline
+\textbf{Column} & \textbf{Type} & \textbf{Description} \\
+\hline
+id & UUID & Primary key \\
+\hline
+user\_id & UUID & Foreign key to users table \\
+\hline
+title & VARCHAR(500) & Conversation title (first message excerpt) \\
+\hline
+mode & VARCHAR(20) & Conversation mode (AUTO, RAG, SUPPORT) \\
+\hline
+status & VARCHAR(20) & Conversation status (active, archived, escalated, closed) \\
+\hline
+message\_count & INTEGER & Cached message count (auto-updated by trigger) \\
+\hline
+last\_message\_at & TIMESTAMPTZ & Timestamp of last message \\
+\hline
+created\_at & TIMESTAMPTZ & Conversation start time \\
+\hline
+updated\_at & TIMESTAMPTZ & Last update time (auto-updated) \\
+\hline
+archived\_at & TIMESTAMPTZ & Archive timestamp \\
+\hline
+\end{longtable}
+
+\textbf{Foreign Keys}:
+\begin{itemize}
+  \item user\_id REFERENCES users(id) ON DELETE CASCADE
+  \item mode REFERENCES conversation\_modes(code)
+  \item status REFERENCES conversation\_statuses(code)
+\end{itemize}
+
+\textbf{Indexes}:
+\begin{itemize}
+  \item idx\_conversations\_user\_id: B-tree on user\_id (partial: WHERE archived\_at IS NULL)
+  \item idx\_conversations\_status: B-tree on status
+  \item idx\_conversations\_mode: B-tree on mode
+  \item idx\_conversations\_updated\_at: B-tree on updated\_at DESC
+  \item idx\_conversations\_user\_updated: Composite B-tree on (user\_id, updated\_at DESC)
+\end{itemize}
+
+\newpage
+
+\subsection{Messages Table}
+
+\textbf{Purpose}: Store individual messages within conversations.
+
+\begin{longtable}{|p{3cm}|p{2.5cm}|p{7cm}|}
+\hline
+\textbf{Column} & \textbf{Type} & \textbf{Description} \\
+\hline
+id & UUID & Primary key \\
+\hline
+conversation\_id & UUID & Foreign key to conversations \\
+\hline
+role & VARCHAR(20) & Message role (user, assistant, system) \\
+\hline
+content & TEXT & Message content (max 10,000 chars) \\
+\hline
+metadata & JSONB & Flexible metadata storage \\
+\hline
+tokens\_used & INTEGER & Token count for LLM calls \\
+\hline
+processing\_time\_ms & INTEGER & Processing time in milliseconds \\
+\hline
+created\_at & TIMESTAMPTZ & Message timestamp \\
+\hline
+edited\_at & TIMESTAMPTZ & Edit timestamp \\
+\hline
+deleted\_at & TIMESTAMPTZ & Soft delete timestamp \\
+\hline
+\end{longtable}
+
+\textbf{Constraints}:
+\begin{itemize}
+  \item CHECK: role IN ('user', 'assistant', 'system')
+  \item CHECK: LENGTH(content) > 0 AND LENGTH(content) <= 10000
+  \item CHECK: tokens\_used IS NULL OR tokens\_used > 0
+\end{itemize}
+
+\textbf{Indexes}:
+\begin{itemize}
+  \item idx\_messages\_conversation\_id: B-tree on conversation\_id
+  \item idx\_messages\_created\_at: B-tree on created\_at DESC
+  \item idx\_messages\_conversation\_created: Composite on (conversation\_id, created\_at ASC)
+  \item idx\_messages\_content\_fts: GIN index for full-text search (Arabic)
+\end{itemize}
+
+\newpage
+
+\subsection{Document Chunks Table (RAG)}
+
+\textbf{Purpose}: Store document chunks with vector embeddings for semantic search.
+
+\begin{longtable}{|p{3cm}|p{2.5cm}|p{7cm}|}
+\hline
+\textbf{Column} & \textbf{Type} & \textbf{Description} \\
+\hline
+id & UUID & Primary key \\
+\hline
+document\_id & UUID & Foreign key to documents \\
+\hline
+content & TEXT & Chunk content \\
+\hline
+embedding & vector(1536) & OpenAI ada-002 embedding (1536 dimensions) \\
+\hline
+chunk\_index & INTEGER & Sequential chunk number \\
+\hline
+metadata & JSONB & Chunk metadata \\
+\hline
+token\_count & INTEGER & Token count in chunk \\
+\hline
+start\_position & INTEGER & Start position in original document \\
+\hline
+end\_position & INTEGER & End position in original document \\
+\hline
+created\_at & TIMESTAMPTZ & Creation timestamp \\
+\hline
+\end{longtable}
+
+\textbf{Constraints}:
+\begin{itemize}
+  \item CHECK: chunk\_index >= 0
+  \item CHECK: end\_position > start\_position (if both not null)
+  \item UNIQUE: (document\_id, chunk\_index)
+\end{itemize}
+
+\textbf{Indexes}:
+\begin{itemize}
+  \item idx\_document\_chunks\_document\_id: B-tree on document\_id
+  \item idx\_document\_chunks\_embedding\_ivfflat: IVFFlat index for vector similarity search
+\end{itemize}
+
+\textbf{Vector Search}:
+The IVFFlat index enables fast cosine similarity search:
+\begin{lstlisting}[language=SQL]
+SELECT content, 
+       1 - (embedding <=> query_vector) as similarity
+FROM document_chunks
+WHERE 1 - (embedding <=> query_vector) > 0.7
+ORDER BY embedding <=> query_vector
+LIMIT 5;
+\end{lstlisting}
+
+\newpage
+
+\subsection{Support Tickets Table}
+
+\textbf{Purpose}: Manage support tickets for human intervention.
+
+\begin{longtable}{|p{3cm}|p{2.5cm}|p{7cm}|}
+\hline
+\textbf{Column} & \textbf{Type} & \textbf{Description} \\
+\hline
+id & UUID & Primary key \\
+\hline
+ticket\_number & VARCHAR(20) & Human-readable ticket number (e.g., TKT-2025-000001) \\
+\hline
+conversation\_id & UUID & Foreign key to conversations (nullable) \\
+\hline
+user\_id & UUID & Foreign key to users \\
+\hline
+subject & VARCHAR(500) & Ticket subject \\
+\hline
+category & VARCHAR(50) & Ticket category (addiction, mental\_health, etc.) \\
+\hline
+priority & VARCHAR(20) & Priority level (low, medium, high, urgent) \\
+\hline
+status & VARCHAR(20) & Ticket status (open, in\_progress, resolved, closed) \\
+\hline
+assigned\_to & UUID & Assigned staff member \\
+\hline
+assigned\_at & TIMESTAMPTZ & Assignment timestamp \\
+\hline
+escalated & BOOLEAN & Escalation flag \\
+\hline
+escalation\_reason & TEXT & Reason for escalation \\
+\hline
+escalated\_at & TIMESTAMPTZ & Escalation timestamp \\
+\hline
+escalated\_by & UUID & User who escalated \\
+\hline
+sla\_due\_at & TIMESTAMPTZ & SLA deadline (auto-calculated) \\
+\hline
+sla\_breached & BOOLEAN & SLA breach flag \\
+\hline
+resolution\_notes & TEXT & Resolution details \\
+\hline
+resolved\_by & UUID & User who resolved \\
+\hline
+created\_at & TIMESTAMPTZ & Creation timestamp \\
+\hline
+updated\_at & TIMESTAMPTZ & Last update (auto-updated) \\
+\hline
+resolved\_at & TIMESTAMPTZ & Resolution timestamp \\
+\hline
+closed\_at & TIMESTAMPTZ & Closure timestamp \\
+\hline
+\end{longtable}
+
+\textbf{Foreign Keys}:
+\begin{itemize}
+  \item user\_id REFERENCES users(id) ON DELETE CASCADE
+  \item category REFERENCES ticket\_categories(code)
+  \item priority REFERENCES ticket\_priorities(code)
+  \item status REFERENCES ticket\_statuses(code)
+\end{itemize}
+
+\textbf{Triggers}:
+\begin{itemize}
+  \item Auto-generate ticket\_number: TKT-YYYY-NNNNNN
+  \item Auto-calculate sla\_due\_at based on priority
+\end{itemize}
+
+\newpage
+
+\section{Normalization Analysis}
+
+\subsection{First Normal Form (1NF)}
+
+All tables satisfy 1NF:
+\begin{itemize}
+  \item All columns contain atomic values
+  \item No repeating groups
+  \item Each row is unique (primary key)
+  \item Column order is irrelevant
+\end{itemize}
+
+\subsection{Second Normal Form (2NF)}
+
+All tables satisfy 2NF:
+\begin{itemize}
+  \item All tables are in 1NF
+  \item All non-key attributes are fully functionally dependent on the primary key
+  \item No partial dependencies exist
+\end{itemize}
+
+\textbf{Example}: In the \texttt{messages} table, all attributes (content, role, metadata) depend on the entire primary key (id), not just part of it.
+
+\subsection{Third Normal Form (3NF)}
+
+All tables satisfy 3NF:
+\begin{itemize}
+  \item All tables are in 2NF
+  \item No transitive dependencies
+  \item All non-key attributes depend only on the primary key
+\end{itemize}
+
+\textbf{Example}: User preferences are separated into \texttt{user\_preferences} table to eliminate transitive dependency through user\_id.
+
+\subsection{Denormalization for Performance}
+
+Strategic denormalization for performance:
+\begin{itemize}
+  \item \texttt{conversations.message\_count}: Cached count (updated by trigger)
+  \item \texttt{conversations.last\_message\_at}: Cached timestamp (updated by trigger)
+  \item \texttt{documents.chunk\_count}: Cached count for quick access
+\end{itemize}
+
+These denormalizations are justified by:
+\begin{itemize}
+  \item Significant query performance improvement
+  \item Automated maintenance via triggers
+  \item Read-heavy workload characteristics
+\end{itemize}
+
+\newpage
+
+\section{Indexing Strategy}
+
+\subsection{Index Types}
+
+\begin{enumerate}
+  \item \textbf{B-tree Indexes}: Default for most columns (equality and range queries)
+  \item \textbf{GIN Indexes}: Full-text search on message content
+  \item \textbf{IVFFlat Indexes}: Vector similarity search (pgvector)
+  \item \textbf{Partial Indexes}: Filtered indexes for common WHERE clauses
+  \item \textbf{Composite Indexes}: Multi-column indexes for common query patterns
+\end{enumerate}
+
+\subsection{Index Maintenance}
+
+\textbf{Monitoring}:
+\begin{lstlisting}[language=SQL]
+-- Check index usage
+SELECT schemaname, tablename, indexname, 
+       idx_scan, idx_tup_read, idx_tup_fetch
+FROM pg_stat_user_indexes
+ORDER BY idx_scan ASC;
+
+-- Check index size
+SELECT schemaname, tablename, indexname,
+       pg_size_pretty(pg_relation_size(indexrelid)) as size
+FROM pg_stat_user_indexes
+ORDER BY pg_relation_size(indexrelid) DESC;
+\end{lstlisting}
+
+\textbf{Maintenance Schedule}:
+\begin{itemize}
+  \item Weekly: ANALYZE tables
+  \item Monthly: REINDEX CONCURRENTLY for heavily updated indexes
+  \item Quarterly: Review unused indexes
+\end{itemize}
+
+\newpage
+
+\section{Performance Optimization}
+
+\subsection{Query Optimization}
+
+\textbf{Best Practices}:
+\begin{enumerate}
+  \item Use prepared statements to prevent SQL injection and improve performance
+  \item Leverage partial indexes for filtered queries
+  \item Use EXPLAIN ANALYZE to identify slow queries
+  \item Implement connection pooling (20 connections recommended)
+  \item Cache frequently accessed data in Redis
+\end{enumerate}
+
+\subsection{Vector Search Optimization}
+
+\textbf{pgvector Configuration}:
+\begin{lstlisting}[language=SQL]
+-- IVFFlat index with 100 lists (good for 10K-1M vectors)
+CREATE INDEX idx_document_chunks_embedding_ivfflat 
+ON document_chunks 
+USING ivfflat (embedding vector_cosine_ops) 
+WITH (lists = 100);
+
+-- For larger datasets (1M+ vectors), increase lists:
+-- WITH (lists = 1000);
+\end{lstlisting}
+
+\textbf{Search Performance}:
+\begin{itemize}
+  \item Expected query time: < 100ms for top-5 results
+  \item Index build time: ~1 second per 1000 vectors
+  \item Memory usage: ~4KB per vector (1536 dimensions)
+\end{itemize}
+
+\subsection{Partitioning Strategy}
+
+For tables with high growth rates (audit\_logs, messages):
+
+\begin{lstlisting}[language=SQL]
+-- Example: Partition audit_logs by month
+CREATE TABLE audit_logs_2025_01 
+PARTITION OF audit_logs
+FOR VALUES FROM ('2025-01-01') TO ('2025-02-01');
+\end{lstlisting}
+
+\textbf{Benefits}:
+\begin{itemize}
+  \item Faster queries on recent data
+  \item Easier data archival
+  \item Improved vacuum performance
+\end{itemize}
+
+\newpage
+
+\section{Security Considerations}
+
+\subsection{Data Protection}
+
+\begin{enumerate}
+  \item \textbf{Encryption at Rest}: Enable PostgreSQL encryption
+  \item \textbf{Encryption in Transit}: Use SSL/TLS for connections
+  \item \textbf{Password Hashing}: Bcrypt with 10 rounds
+  \item \textbf{PII Protection}: Flag and review documents before indexing
+  \item \textbf{Audit Trail}: Comprehensive logging in audit\_logs table
+\end{enumerate}
+
+\subsection{Access Control}
+
+\textbf{Role-Based Access}:
+\begin{lstlisting}[language=SQL]
+-- Application role (read/write)
+CREATE ROLE amal_app WITH LOGIN PASSWORD 'secure_password';
+GRANT CONNECT ON DATABASE amal_chat TO amal_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES TO amal_app;
+
+-- Read-only role (analytics)
+CREATE ROLE amal_readonly WITH LOGIN PASSWORD 'readonly_password';
+GRANT CONNECT ON DATABASE amal_chat TO amal_readonly;
+GRANT SELECT ON ALL TABLES TO amal_readonly;
+
+-- Admin role (full access)
+CREATE ROLE amal_admin WITH LOGIN PASSWORD 'admin_password' SUPERUSER;
+\end{lstlisting}
+
+\subsection{GDPR Compliance}
+
+\begin{itemize}
+  \item \textbf{Consent Tracking}: consent\_data\_storage, consent\_timestamp
+  \item \textbf{Right to be Forgotten}: Soft delete with deleted\_at
+  \item \textbf{Data Portability}: Export functions for user data
+  \item \textbf{Audit Trail}: Complete history in audit\_logs
+\end{itemize}
+
+\newpage
+
+\section{Backup and Recovery}
+
+\subsection{Backup Strategy}
+
+\textbf{Daily Backups}:
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+# Daily backup script
+pg_dump -U amal_user -h localhost amal_chat | \
+  gzip > /backups/amal_db_$(date +\%Y\%m\%d).sql.gz
+
+# Retain last 7 days
+find /backups -name "amal_db_*.sql.gz" -mtime +7 -delete
+\end{lstlisting}
+
+\textbf{Backup Schedule}:
+\begin{itemize}
+  \item \textbf{Full Backup}: Daily at 2:00 AM
+  \item \textbf{Incremental}: Every 6 hours (WAL archiving)
+  \item \textbf{Retention}: 7 days local, 30 days offsite
+\end{itemize}
+
+\subsection{Recovery Procedures}
+
+\textbf{Point-in-Time Recovery}:
+\begin{lstlisting}[language=bash]
+# Restore from backup
+gunzip < /backups/amal_db_20250115.sql.gz | \
+  psql -U amal_user -h localhost amal_chat
+
+# Restore to specific point in time
+pg_restore --target-time='2025-01-15 14:30:00' \
+  /backups/amal_db_20250115.sql.gz
+\end{lstlisting}
+
+\textbf{Recovery Time Objective (RTO)}: < 1 hour \\
+\textbf{Recovery Point Objective (RPO)}: < 6 hours
+
+\newpage
+
+\section{Monitoring and Maintenance}
+
+\subsection{Health Checks}
+
+\textbf{Daily Monitoring}:
+\begin{lstlisting}[language=SQL]
+-- Check database size
+SELECT pg_size_pretty(pg_database_size('amal_chat'));
+
+-- Check table sizes
+SELECT schemaname, tablename,
+       pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename))
+FROM pg_tables
+WHERE schemaname = 'public'
+ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
+
+-- Check slow queries
+SELECT query, mean_exec_time, calls
+FROM pg_stat_statements
+ORDER BY mean_exec_time DESC
+LIMIT 10;
+
+-- Check index usage
+SELECT schemaname, tablename, indexname, idx_scan
+FROM pg_stat_user_indexes
+WHERE idx_scan = 0
+ORDER BY pg_relation_size(indexrelid) DESC;
+\end{lstlisting}
+
+\subsection{Maintenance Tasks}
+
+\textbf{Weekly}:
+\begin{itemize}
+  \item ANALYZE all tables
+  \item Review slow query log
+  \item Check disk space
+\end{itemize}
+
+\textbf{Monthly}:
+\begin{itemize}
+  \item VACUUM ANALYZE
+  \item REINDEX CONCURRENTLY
+  \item Review and archive old data
+  \item Update statistics
+\end{itemize}
+
+\textbf{Quarterly}:
+\begin{itemize}
+  \item Full database backup verification
+  \item Security audit
+  \item Performance review
+  \item Capacity planning
+\end{itemize}
+
+\newpage
+
+\section{Appendix}
+
+\subsection{A. Database Statistics}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|r|}
+\hline
+\textbf{Metric} & \textbf{Value} \\
+\hline
+Total Tables & 22 \\
+Core Tables & 18 \\
+Lookup Tables & 4 \\
+Views & 4 \\
+Materialized Views & 1 \\
+Indexes & 40+ \\
+Triggers & 6 \\
+Functions & 4 \\
+\hline
+\end{tabular}
+\caption{Database Object Count}
+\end{table}
+
+\subsection{B. Glossary}
+
+\begin{description}
+  \item[RAG] Retrieval-Augmented Generation - AI technique combining retrieval and generation
+  \item[pgvector] PostgreSQL extension for vector similarity search
+  \item[IVFFlat] Inverted File with Flat compression - vector index type
+  \item[SLA] Service Level Agreement - response time commitment
+  \item[3NF] Third Normal Form - database normalization level
+  \item[GDPR] General Data Protection Regulation - EU privacy law
+\end{description}
+
+\subsection{C. References}
+
+\begin{enumerate}
+  \item PostgreSQL Documentation: \url{https://www.postgresql.org/docs/}
+  \item pgvector Documentation: \url{https://github.com/pgvector/pgvector}
+  \item Database Normalization: Codd, E.F. (1970)
+  \item GDPR Compliance: \url{https://gdpr.eu/}
+\end{enumerate}
+
+\subsection{D. Contact Information}
+
+\begin{itemize}
+  \item \textbf{Database Team}: dba@amal.dz
+  \item \textbf{Support}: support@amal.dz
+  \item \textbf{Security}: security@amal.dz
+\end{itemize}
+
+\end{document}
