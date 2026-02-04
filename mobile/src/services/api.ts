@@ -1,5 +1,5 @@
 /**
- * API Service for Amal Backend
+ * API Service for IQLAA Backend
  * Connects mobile app to the Python backend
  */
 

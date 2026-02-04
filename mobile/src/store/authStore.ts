@@ -29,7 +29,7 @@ interface AuthState {
   clearError: () => void;
 }
 
-const AUTH_STORAGE_KEY = '@amal_auth';
+const AUTH_STORAGE_KEY = '@iqlaa_auth';
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,

@@ -51,15 +51,19 @@ In emergencies or suicidal thoughts, direct the user to call crisis line 3033 (f
             device_map: Device mapping strategy ('auto', 'cuda', 'cpu').
         """
         if adapter_path is None:
-            adapter_path = Path(__file__).parent / "working" / "phase3-final"
+            # Get the directory where this file is located
+            this_file_dir = Path(__file__).resolve().parent
+            adapter_path = this_file_dir / "working" / "phase3-final"
         else:
             adapter_path = Path(adapter_path)
         
         self.adapter_path = adapter_path
+        print(f"Looking for adapter at: {adapter_path}")
         
         # Check if adapter exists
-        if not (adapter_path / "adapter_model.safetensors").exists():
-            raise FileNotFoundError(f"Adapter not found at {adapter_path}")
+        adapter_file = adapter_path / "adapter_model.safetensors"
+        if not adapter_file.exists():
+            raise FileNotFoundError(f"Adapter not found at {adapter_file}")
         
         # Set device
         self.device = "cuda" if torch.cuda.is_available() else "cpu"

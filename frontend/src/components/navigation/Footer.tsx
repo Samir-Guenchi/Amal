@@ -12,7 +12,7 @@ export function Footer() {
               <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">أ</span>
               </div>
-              <span className="font-semibold text-lg text-white">Amal</span>
+              <span className="font-semibold text-lg text-white">IQLAA</span>
             </Link>
             <p className="text-sm text-zinc-500 mb-4">
               AI-powered support for your recovery journey. Available 24/7 in Arabic, French, and Darija.
@@ -84,7 +84,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-zinc-500">
-            © {new Date().getFullYear()} Amal. Made with hope for Algeria.
+            © {new Date().getFullYear()} IQLAA. Made with hope for Algeria.
           </p>
           <div className="flex items-center gap-6 text-sm text-zinc-500">
             <span className="flex items-center gap-2">

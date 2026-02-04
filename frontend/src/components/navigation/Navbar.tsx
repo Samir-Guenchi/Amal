@@ -79,7 +79,7 @@ export function Navbar() {
               <span className={`text-[22px] font-bold tracking-tight ${
                 theme === 'dark' ? 'text-white' : 'text-zinc-900'
               }`}>
-                amal
+                iqlaa
               </span>
               <span className={`text-[10px] font-medium ${
                 theme === 'dark' ? 'text-green-400' : 'text-green-600'

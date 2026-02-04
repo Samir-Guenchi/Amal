@@ -41,7 +41,7 @@ export function LoginPage() {
               <circle cx="18" cy="28" r="2" fill={theme === 'dark' ? '#09090b' : 'white'} />
             </svg>
             <div className="flex items-baseline gap-1">
-              <span className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>amal</span>
+              <span className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>iqlaa</span>
               <span className={`text-[10px] font-medium ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>dz</span>
             </div>
           </Link>

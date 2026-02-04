@@ -301,7 +301,7 @@ export function ChatScreen() {
             {isTemporaryMode ? <EyeOff size={16} color="#fff" /> : <Sparkles size={16} color="#fff" />}
           </View>
           <View>
-            <Text style={[styles.headerTitle, { color: c.text }]}>{isTemporaryMode ? texts.tempChat[language] : 'Amal'}</Text>
+            <Text style={[styles.headerTitle, { color: c.text }]}>{isTemporaryMode ? texts.tempChat[language] : 'IQLAA'}</Text>
             <View style={styles.statusRow}>
               <View style={[styles.statusDot, { backgroundColor: accentColor }]} />
               <Text style={[styles.headerStatus, { color: accentColor }]}>

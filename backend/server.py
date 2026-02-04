@@ -14,7 +14,7 @@ from auth import auth_backend
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="Amal API",
+    title="IQLAA API",
     description="Drug recovery support AI backend for Algeria",
     version="1.0.0"
 )
@@ -54,6 +54,7 @@ class HealthResponse(BaseModel):
     status: str
     intent_model: bool
     rag_model: bool
+    support_model: bool
 
 
 # Auth models
@@ -101,7 +102,8 @@ async def startup_event():
     """Load models on server startup."""
     global backend
     print("\n🚀 Starting Amal API Server...")
-    backend = AmalBackend(load_rag=True)
+    # Set load_support=True to enable support model (requires GPU with 8GB+ VRAM)
+    backend = AmalBackend(load_rag=True, load_support=True)
     print("✓ Server ready!\n")
 
 
@@ -109,7 +111,7 @@ async def startup_event():
 async def root():
     """Root endpoint."""
     return {
-        "name": "Amal API",
+        "name": "IQLAA API",
         "version": "1.0.0",
         "description": "Drug recovery support AI for Algeria",
         "endpoints": {
@@ -125,7 +127,8 @@ async def health_check():
     return HealthResponse(
         status="healthy" if backend else "initializing",
         intent_model=backend.intent_backend is not None if backend else False,
-        rag_model=backend.rag_backend is not None if backend else False
+        rag_model=backend.rag_backend is not None if backend else False,
+        support_model=backend.support_backend is not None if backend else False
     )
 
 

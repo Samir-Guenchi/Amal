@@ -27,7 +27,7 @@ const { width } = Dimensions.get('window');
 type AuthMode = 'signin' | 'signup' | 'forgot';
 
 const texts: Record<string, LocalizedText> = {
-  welcome: { en: 'Welcome to Amal', ar: 'مرحباً بك في أمل', fr: 'Bienvenue sur Amal', dz: 'مرحبا بيك في أمل' },
+  welcome: { en: 'Welcome to IQLAA', ar: 'مرحباً بك في إقلاع', fr: 'Bienvenue sur IQLAA', dz: 'مرحبا بيك في إقلاع' },
   signIn: { en: 'Sign In', ar: 'تسجيل الدخول', fr: 'Connexion', dz: 'دخول' },
   signUp: { en: 'Create Account', ar: 'إنشاء حساب', fr: 'Créer un compte', dz: 'انشاء حساب' },
   forgotPassword: { en: 'Forgot Password', ar: 'نسيت كلمة المرور', fr: 'Mot de passe oublié', dz: 'نسيت كلمة السر' },

@@ -7,7 +7,7 @@ Flow:
    - Out of context → polite rejection message
    - Harm → crisis intervention with 3033 hotline
    - Exact fact → RAG scientific backend
-   - Looking for support → Support model (in development)
+   - Looking for support → Support model (Qwen2.5-7B + LoRA)
 """
 
 import sys
@@ -19,6 +19,7 @@ from typing import Dict, Tuple, Optional
 ROOT_DIR = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT_DIR / "intent_model"))
 sys.path.insert(0, str(ROOT_DIR / "rag_scientific"))
+sys.path.insert(0, str(ROOT_DIR / "model_support"))
 
 # Load environment variables from rag_scientific/.env
 from dotenv import load_dotenv
@@ -83,25 +84,26 @@ You are not alone. There are people who want to help you."""
         "en": "I understand you're looking for support. The psychological support system is currently under development. In the meantime, you can call the helpline {crisis_line} to speak with a specialist."
     }
 
-    def __init__(self, load_rag: bool = True):
+    def __init__(self, load_rag: bool = True, load_support: bool = False):
         """
         Initialize the Amal Backend.
         
         Args:
             load_rag: Whether to load RAG backend (requires ChromaDB + embeddings).
+            load_support: Whether to load Support model (requires GPU with 8GB+ VRAM).
         """
         print("=" * 60)
         print("Initializing Amal Backend")
         print("=" * 60)
         
         # Load intent classifier
-        print("\n[1/2] Loading Intent Classifier...")
+        print("\n[1/3] Loading Intent Classifier...")
         self.intent_backend = IntentBackend()
         
         # Load RAG backend (optional)
         self.rag_backend = None
         if load_rag:
-            print("\n[2/2] Loading RAG Backend...")
+            print("\n[2/3] Loading RAG Backend...")
             try:
                 from rag_backend import RAGBackend
                 # Use correct path to database
@@ -111,7 +113,25 @@ You are not alone. There are people who want to help you."""
                 print(f"⚠ RAG Backend not loaded: {e}")
                 print("  Exact fact queries will return a fallback message.")
         else:
-            print("\n[2/2] RAG Backend skipped (load_rag=False)")
+            print("\n[2/3] RAG Backend skipped (load_rag=False)")
+        
+        # Load Support model (optional - requires GPU)
+        self.support_backend = None
+        if load_support:
+            print("\n[3/3] Loading Support Model...")
+            try:
+                from support_backend import SupportBackend
+                # Use 4-bit quantization for 8GB VRAM GPUs
+                self.support_backend = SupportBackend(load_in_4bit=True, load_in_8bit=False)
+                print("✓ Support Backend loaded successfully")
+            except Exception as e:
+                import traceback
+                print(f"⚠ Support Backend not loaded: {e}")
+                print("Full error:")
+                traceback.print_exc()
+                print("  Support queries will return a fallback message.")
+        else:
+            print("\n[3/3] Support Model skipped (load_support=False)")
         
         print("\n" + "=" * 60)
         print("✓ Amal Backend initialized")
@@ -212,8 +232,17 @@ You are not alone. There are people who want to help you."""
                 source = "rag_unavailable"
                 
         elif intent_label == "Looking for support":
-            response = self.get_response(query, language, self.SUPPORT_IN_DEV_RESPONSES)
-            source = "support_in_development"
+            if self.support_backend:
+                try:
+                    response = self.support_backend.generate_response(query)
+                    source = "support_model"
+                except Exception as e:
+                    print(f"⚠ Support model error: {e}")
+                    response = self.get_response(query, language, self.SUPPORT_IN_DEV_RESPONSES)
+                    source = "support_error"
+            else:
+                response = self.get_response(query, language, self.SUPPORT_IN_DEV_RESPONSES)
+                source = "support_unavailable"
         
         return {
             "intent": intent_label,

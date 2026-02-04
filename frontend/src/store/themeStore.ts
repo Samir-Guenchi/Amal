@@ -18,7 +18,7 @@ export const useThemeStore = create<ThemeState>()(
       setTheme: (theme) => set({ theme }),
     }),
     {
-      name: 'amal-theme',
+      name: 'iqlaa-theme',
     }
   )
 );

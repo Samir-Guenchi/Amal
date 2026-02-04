@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Amal - أمل",
-    "slug": "amal-mobile",
+    "name": "IQLAA - إقلاع",
+    "slug": "iqlaa-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
@@ -12,19 +12,19 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.amal.recovery"
+      "bundleIdentifier": "com.iqlaa.recovery"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#09090b"
       },
-      "package": "com.amal.recovery"
+      "package": "com.iqlaa.recovery"
     },
     "web": {
       "bundler": "metro"
     },
     "extra": {
-      "apiUrl": "https://api.amal.dz"
+      "apiUrl": "https://api.iqlaa.dz"
     }
   }
 }

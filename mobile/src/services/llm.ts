@@ -3,7 +3,7 @@ import { sendChatMessage, ChatResponse } from './api';
 
 /**
  * LLM Service for RAG-powered chat
- * Connects to Amal backend API for intent classification and RAG responses.
+ * Connects to IQLAA backend API for intent classification and RAG responses.
  */
 class LLMService {
   /**

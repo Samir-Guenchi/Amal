@@ -381,7 +381,7 @@ export function ChatPage() {
                 <path d="M18 8L12 24H15L18 16L21 24H24L18 8Z" fill={theme === 'dark' ? '#18181b' : 'white'} />
                 <circle cx="18" cy="28" r="2" fill={theme === 'dark' ? '#18181b' : 'white'} />
               </svg>
-              <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>amal</span>
+              <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>iqlaa</span>
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
@@ -713,7 +713,7 @@ export function ChatPage() {
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <Sparkles className="w-4 h-4 text-green-500" />
-                            <span className="text-xs text-green-500 font-medium">Amal</span>
+                            <span className="text-xs text-green-500 font-medium">IQLAA</span>
                           </div>
                           {index > 0 && index % 3 === 0 && (
                             <div className="flex items-center gap-1 opacity-60">
@@ -804,7 +804,7 @@ export function ChatPage() {
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1">
                         <Sparkles className="w-4 h-4 text-green-500 animate-pulse" />
-                        <span className="text-xs text-green-500 font-medium">Amal</span>
+                        <span className="text-xs text-green-500 font-medium">IQLAA</span>
                       </div>
                       <div className="flex gap-1.5">
                         <span

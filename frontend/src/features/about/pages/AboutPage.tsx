@@ -33,10 +33,10 @@ export function AboutPage() {
   const stories = [
     {
       quote: {
-        en: '"I was afraid to talk to anyone. Amal listened without judging me."',
-        ar: '"كنت خائفاً من التحدث لأي شخص. أمل استمع لي بدون أن يحكم علي."',
-        fr: '"J\'avais peur de parler à qui que ce soit. Amal m\'a écouté sans me juger."',
-        dz: '"كنت خايف نهدر مع أي واحد. أمل سمعني بلا ما يحكم عليا."',
+        en: '"I was afraid to talk to anyone. IQLAA listened without judging me."',
+        ar: '"كنت خائفاً من التحدث لأي شخص. إقلاع استمع لي بدون أن يحكم علي."',
+        fr: '"J\'avais peur de parler à qui que ce soit. IQLAA m\'a écouté sans me juger."',
+        dz: '"كنت خايف نهدر مع أي واحد. إقلاع سمعني بلا ما يحكم عليا."',
       },
       age: '24',
       location: { en: 'Algiers', ar: 'الجزائر', fr: 'Alger', dz: 'الجزائر' },
@@ -53,10 +53,10 @@ export function AboutPage() {
     },
     {
       quote: {
-        en: '"At 3am when I couldn\'t sleep, Amal was there. That meant everything."',
-        ar: '"في الثالثة صباحاً عندما لم أستطع النوم، كان أمل هناك. هذا يعني كل شيء."',
-        fr: '"À 3h du matin quand je ne pouvais pas dormir, Amal était là. Ça signifiait tout."',
-        dz: '"في 3 تاع الصباح كي ما قدرتش نرقد، أمل كان هنا. هذا يعني كلش."',
+        en: '"At 3am when I couldn\'t sleep, IQLAA was there. That meant everything."',
+        ar: '"في الثالثة صباحاً عندما لم أستطع النوم، كان إقلاع هناك. هذا يعني كل شيء."',
+        fr: '"À 3h du matin quand je ne pouvais pas dormir, IQLAA était là. Ça signifiait tout."',
+        dz: '"في 3 تاع الصباح كي ما قدرتش نرقد، إقلاع كان هنا. هذا يعني كلش."',
       },
       age: '28',
       location: { en: 'Constantine', ar: 'قسنطينة', fr: 'Constantine', dz: 'قسنطينة' },
@@ -143,10 +143,10 @@ export function AboutPage() {
             </p>
             <p>
               {{
-                en: "Amal exists because we believe no one in Algeria should face addiction alone. Not at 3am. Not ever.",
-                ar: "أمل موجود لأننا نؤمن بأنه لا ينبغي لأحد في الجزائر أن يواجه الإدمان وحده. ليس في الثالثة صباحاً. ولا في أي وقت.",
-                fr: "Amal existe parce que nous croyons que personne en Algérie ne devrait affronter l'addiction seul. Pas à 3h du matin. Jamais.",
-                dz: "أمل موجود لأننا نآمنو بلي ما يلزمش حتى واحد في الجزائر يواجه الإدمان وحدو. لا في 3 تاع الصباح. لا أبداً.",
+                en: "IQLAA exists because we believe no one in Algeria should face addiction alone. Not at 3am. Not ever.",
+                ar: "إقلاع موجود لأننا نؤمن بأنه لا ينبغي لأحد في الجزائر أن يواجه الإدمان وحده. ليس في الثالثة صباحاً. ولا في أي وقت.",
+                fr: "IQLAA existe parce que nous croyons que personne en Algérie ne devrait affronter l'addiction seul. Pas à 3h du matin. Jamais.",
+                dz: "إقلاع موجود لأننا نآمنو بلي ما يلزمش حتى واحد في الجزائر يواجه الإدمان وحدو. لا في 3 تاع الصباح. لا أبداً.",
               }[language]}
             </p>
           </div>
@@ -174,20 +174,20 @@ export function AboutPage() {
                 </div>
                 <div>
                   <h2 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>
-                    أمل
+                    إقلاع
                   </h2>
                   <p className={`text-sm ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-700'}`}>
-                    /ˈamal/
+                    /iqˈlaːʕ/
                   </p>
                 </div>
               </div>
               
               <p className={`text-xl mb-4 ${theme === 'dark' ? 'text-zinc-200' : 'text-zinc-800'}`}>
                 {{
-                  en: '"Hope" in Arabic.',
-                  ar: '"الأمل" بالعربية.',
-                  fr: '"Espoir" en arabe.',
-                  dz: '"الأمل" بالعربية.',
+                  en: '"Takeoff" or "Launch" in Arabic.',
+                  ar: '"الإقلاع" بالعربية.',
+                  fr: '"Décollage" en arabe.',
+                  dz: '"الإقلاع" بالعربية.',
                 }[language]}
               </p>
               
@@ -523,10 +523,10 @@ export function AboutPage() {
         <div className="max-w-3xl mx-auto">
           <p className={`text-sm text-center ${theme === 'dark' ? 'text-zinc-500' : 'text-zinc-600'}`}>
             {{
-              en: "Amal is a support tool, not a replacement for professional medical care. If you need medical help, please reach out to a healthcare provider.",
-              ar: "أمل أداة دعم، وليس بديلاً عن الرعاية الطبية المهنية. إذا كنت بحاجة إلى مساعدة طبية، يرجى التواصل مع مقدم رعاية صحية.",
-              fr: "Amal est un outil de soutien, pas un remplacement pour les soins médicaux professionnels.",
-              dz: "أمل أداة دعم، ماشي بديل على الرعاية الطبية. إذا تحتاج مساعدة طبية، تواصل مع طبيب.",
+              en: "IQLAA is a support tool, not a replacement for professional medical care. If you need medical help, please reach out to a healthcare provider.",
+              ar: "إقلاع أداة دعم، وليس بديلاً عن الرعاية الطبية المهنية. إذا كنت بحاجة إلى مساعدة طبية، يرجى التواصل مع مقدم رعاية صحية.",
+              fr: "IQLAA est un outil de soutien, pas un remplacement pour les soins médicaux professionnels.",
+              dz: "إقلاع أداة دعم، ماشي بديل على الرعاية الطبية. إذا تحتاج مساعدة طبية، تواصل مع طبيب.",
             }[language]}
           </p>
           <p className={`text-xs text-center mt-4 ${theme === 'dark' ? 'text-zinc-600' : 'text-zinc-500'}`}>

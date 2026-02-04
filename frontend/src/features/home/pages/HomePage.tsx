@@ -349,7 +349,7 @@ function ChatPreview({ theme }: { theme: 'light' | 'dark' }) {
             <Brain className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>Amal AI</p>
+            <p className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>IQLAA AI</p>
             <p className="text-xs text-green-500">Evidence-based support</p>
           </div>
         </div>
@@ -784,7 +784,7 @@ export function HomePage() {
                   <circle cx="18" cy="28" r="2" fill={theme === 'dark' ? '#09090b' : 'white'} />
                 </svg>
                 <div className="flex items-baseline gap-1">
-                  <span className={`text-[22px] font-bold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>amal</span>
+                  <span className={`text-[22px] font-bold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>iqlaa</span>
                   <span className={`text-[10px] font-medium ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>dz</span>
                 </div>
               </Link>

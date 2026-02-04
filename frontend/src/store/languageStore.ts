@@ -44,7 +44,7 @@ const translations: Record<Language, TranslationKeys> = {
       title1: 'Your brain can',
       title2: 'heal itself',
       title3: 'Let us show you how',
-      description: "Amal combines AI technology with addiction science to guide your recovery. Get evidence-based support, understand what's happening in your brain, and build strategies that work. Free, confidential, in your language.",
+      description: "IQLAA combines AI technology with addiction science to guide your recovery. Get evidence-based support, understand what's happening in your brain, and build strategies that work. Free, confidential, in your language.",
       cta: 'Start recovery conversation',
       crisis: 'Crisis: 3033',
       evidenceBased: 'Evidence-based',
@@ -78,7 +78,7 @@ const translations: Record<Language, TranslationKeys> = {
       sustained: 'Sustained Recovery',
       sustainedDesc: 'Cognitive function improves significantly.',
     },
-    chat: { title: 'Conversations that', titleHighlight: 'educate and support', description: 'Amal explains the science, suggests evidence-based techniques, and helps you understand your recovery.' },
+    chat: { title: 'Conversations that', titleHighlight: 'educate and support', description: 'IQLAA explains the science, suggests evidence-based techniques, and helps you understand your recovery.' },
     features: {
       title: 'Built for',
       titleHighlight: 'real recovery',
@@ -97,8 +97,8 @@ const translations: Record<Language, TranslationKeys> = {
     },
     stats: { affected: 'Algerians affected', recovery: 'Recovery possible', available: 'Always available', free: 'Completely free' },
     crisis: { title: "In crisis? You're not alone.", description: "If you're experiencing severe withdrawal, overdose risk, or suicidal thoughts, call immediately.", cta: 'Call 3033 Now', note: 'Free, confidential, 24/7 from any phone in Algeria' },
-    cta: { badge: 'Your recovery starts now', title: 'Ready to understand your brain?', description: 'Every conversation with Amal is a step toward understanding addiction and recovery.', button: 'Start learning about recovery' },
-    footer: { description: 'AI-powered, science-backed support for drug recovery in Algeria.', support: 'Support', startChat: 'Start Chat', crisisLine: 'Crisis Line: 3033', resources: 'Resources', learn: 'Learn', addictionScience: 'Addiction Science', recoveryStages: 'Recovery Stages', copingTechniques: 'Coping Techniques', languages: 'Languages', copyright: '© 2024 Amal. Built with science and hope for Algeria.', tagline: 'For Algerians, by Algerians' },
+    cta: { badge: 'Your recovery starts now', title: 'Ready to understand your brain?', description: 'Every conversation with IQLAA is a step toward understanding addiction and recovery.', button: 'Start learning about recovery' },
+    footer: { description: 'AI-powered, science-backed support for drug recovery in Algeria.', support: 'Support', startChat: 'Start Chat', crisisLine: 'Crisis Line: 3033', resources: 'Resources', learn: 'Learn', addictionScience: 'Addiction Science', recoveryStages: 'Recovery Stages', copingTechniques: 'Coping Techniques', languages: 'Languages', copyright: '© 2024 IQLAA. Built with science and hope for Algeria.', tagline: 'For Algerians, by Algerians' },
     auth: {
       welcomeBack: 'Welcome back', signInContinue: 'Sign in to continue your journey', email: 'Email', password: 'Password', rememberMe: 'Remember me', forgotPassword: 'Forgot password?', signIn: 'Sign in', signingIn: 'Signing in...', orContinue: 'or continue with', noAccount: "Don't have an account?", signUp: 'Sign up',
       createAccount: 'Create your account', startJourney: 'Start your journey to recovery', fullName: 'Full name', confirmPassword: 'Confirm password', passwordsNoMatch: 'Passwords do not match', agreeTerms: 'I agree to the', terms: 'Terms of Service', privacy: 'Privacy Policy', creatingAccount: 'Creating account...', haveAccount: 'Already have an account?',
@@ -106,9 +106,9 @@ const translations: Record<Language, TranslationKeys> = {
       chars8: 'At least 8 characters', uppercase: 'One uppercase letter', oneNumber: 'One number',
     },
     chatPage: {
-      title: 'Amal Assistant', status: 'Always here for you', private: 'Your conversation is private and secure', thinking: 'Amal is thinking...', placeholder: 'Type your message...', crisis: 'In crisis? Call', suggested: 'Suggested topics:',
+      title: 'IQLAA Assistant', status: 'Always here for you', private: 'Your conversation is private and secure', thinking: 'IQLAA is thinking...', placeholder: 'Type your message...', crisis: 'In crisis? Call', suggested: 'Suggested topics:',
       prompt1: 'I want to talk about my struggles', prompt2: 'How can I manage cravings?', prompt3: 'I need someone to listen', prompt4: 'Tell me about recovery resources',
-      welcome: "Welcome to Amal. I'm here to support you on your journey to recovery. Everything you share is confidential. How are you feeling today?",
+      welcome: "Welcome to IQLAA. I'm here to support you on your journey to recovery. Everything you share is confidential. How are you feeling today?",
       response1: "I hear you, and I want you to know that reaching out takes courage. Can you tell me more about what you're experiencing?",
       response2: "Recovery is a journey, not a destination. Every step forward matters, no matter how small. What would feel like a manageable first step for you?",
       response3: "Your feelings are valid. Many people on the path to recovery experience similar challenges. Would you like to explore some coping strategies together?",
@@ -124,7 +124,7 @@ const translations: Record<Language, TranslationKeys> = {
       title1: 'دماغك يستطيع',
       title2: 'أن يشفي نفسه',
       title3: 'دعنا نريك كيف',
-      description: 'أمل يجمع بين تقنية الذكاء الاصطناعي وعلم الإدمان لإرشادك في رحلة التعافي. احصل على دعم مبني على الأدلة، افهم ما يحدث في دماغك، وابنِ استراتيجيات فعالة. مجاني، سري، بلغتك.',
+      description: 'إقلاع يجمع بين تقنية الذكاء الاصطناعي وعلم الإدمان لإرشادك في رحلة التعافي. احصل على دعم مبني على الأدلة، افهم ما يحدث في دماغك، وابنِ استراتيجيات فعالة. مجاني، سري، بلغتك.',
       cta: 'ابدأ محادثة التعافي',
       crisis: 'خط الأزمات: 3033',
       evidenceBased: 'مبني على الأدلة',
@@ -158,7 +158,7 @@ const translations: Record<Language, TranslationKeys> = {
       sustained: 'التعافي المستدام',
       sustainedDesc: 'الوظائف الإدراكية تتحسن بشكل ملحوظ.',
     },
-    chat: { title: 'محادثات', titleHighlight: 'تعلم وتدعم', description: 'أمل يشرح العلم، يقترح تقنيات مبنية على الأدلة، ويساعدك على فهم تعافيك.' },
+    chat: { title: 'محادثات', titleHighlight: 'تعلم وتدعم', description: 'إقلاع يشرح العلم، يقترح تقنيات مبنية على الأدلة، ويساعدك على فهم تعافيك.' },
     features: {
       title: 'مبني من أجل',
       titleHighlight: 'تعافٍ حقيقي',
@@ -177,8 +177,8 @@ const translations: Record<Language, TranslationKeys> = {
     },
     stats: { affected: 'جزائريون متأثرون', recovery: 'التعافي ممكن', available: 'متاح دائماً', free: 'مجاني تماماً' },
     crisis: { title: 'في أزمة؟ لست وحدك.', description: 'إذا كنت تعاني من انسحاب شديد أو خطر جرعة زائدة أو أفكار انتحارية، اتصل فوراً.', cta: 'اتصل بـ 3033 الآن', note: 'مكالمة مجانية، سرية، 24/7 من أي هاتف في الجزائر' },
-    cta: { badge: 'تعافيك يبدأ الآن', title: 'مستعد لفهم دماغك؟', description: 'كل محادثة مع أمل هي خطوة نحو فهم الإدمان ومحفزاتك وعلم التحسن.', button: 'ابدأ التعلم عن التعافي' },
-    footer: { description: 'دعم مدعوم بالذكاء الاصطناعي والعلم للتعافي من المخدرات في الجزائر.', support: 'الدعم', startChat: 'ابدأ المحادثة', crisisLine: 'خط الأزمات: 3033', resources: 'الموارد', learn: 'تعلم', addictionScience: 'علم الإدمان', recoveryStages: 'مراحل التعافي', copingTechniques: 'تقنيات التأقلم', languages: 'اللغات', copyright: '© 2024 أمل. صُنع بالعلم والأمل للجزائر.', tagline: 'للجزائريين، من الجزائريين' },
+    cta: { badge: 'تعافيك يبدأ الآن', title: 'مستعد لفهم دماغك؟', description: 'كل محادثة مع إقلاع هي خطوة نحو فهم الإدمان ومحفزاتك وعلم التحسن.', button: 'ابدأ التعلم عن التعافي' },
+    footer: { description: 'دعم مدعوم بالذكاء الاصطناعي والعلم للتعافي من المخدرات في الجزائر.', support: 'الدعم', startChat: 'ابدأ المحادثة', crisisLine: 'خط الأزمات: 3033', resources: 'الموارد', learn: 'تعلم', addictionScience: 'علم الإدمان', recoveryStages: 'مراحل التعافي', copingTechniques: 'تقنيات التأقلم', languages: 'اللغات', copyright: '© 2024 إقلاع. صُنع بالعلم والأمل للجزائر.', tagline: 'للجزائريين، من الجزائريين' },
     auth: {
       welcomeBack: 'مرحباً بعودتك', signInContinue: 'سجل دخولك لمتابعة رحلتك', email: 'البريد الإلكتروني', password: 'كلمة المرور', rememberMe: 'تذكرني', forgotPassword: 'نسيت كلمة المرور؟', signIn: 'تسجيل الدخول', signingIn: 'جاري الدخول...', orContinue: 'أو تابع بـ', noAccount: 'ليس لديك حساب؟', signUp: 'إنشاء حساب',
       createAccount: 'أنشئ حسابك', startJourney: 'ابدأ رحلتك نحو التعافي', fullName: 'الاسم الكامل', confirmPassword: 'تأكيد كلمة المرور', passwordsNoMatch: 'كلمات المرور غير متطابقة', agreeTerms: 'أوافق على', terms: 'شروط الخدمة', privacy: 'سياسة الخصوصية', creatingAccount: 'جاري إنشاء الحساب...', haveAccount: 'لديك حساب بالفعل؟',
@@ -186,9 +186,9 @@ const translations: Record<Language, TranslationKeys> = {
       chars8: '8 أحرف على الأقل', uppercase: 'حرف كبير واحد', oneNumber: 'رقم واحد',
     },
     chatPage: {
-      title: 'مساعد أمل', status: 'دائماً هنا من أجلك', private: 'محادثتك خاصة وآمنة', thinking: 'أمل يفكر...', placeholder: 'اكتب رسالتك...', crisis: 'في أزمة؟ اتصل بـ', suggested: 'مواضيع مقترحة:',
+      title: 'مساعد إقلاع', status: 'دائماً هنا من أجلك', private: 'محادثتك خاصة وآمنة', thinking: 'إقلاع يفكر...', placeholder: 'اكتب رسالتك...', crisis: 'في أزمة؟ اتصل بـ', suggested: 'مواضيع مقترحة:',
       prompt1: 'أريد التحدث عن معاناتي', prompt2: 'كيف أتعامل مع الرغبات؟', prompt3: 'أحتاج من يستمع إلي', prompt4: 'أخبرني عن موارد التعافي',
-      welcome: 'مرحباً بك في أمل. أنا هنا لدعمك في رحلة التعافي. كل ما تشاركه سري. كيف تشعر اليوم؟',
+      welcome: 'مرحباً بك في إقلاع. أنا هنا لدعمك في رحلة التعافي. كل ما تشاركه سري. كيف تشعر اليوم؟',
       response1: 'أسمعك، وأريدك أن تعرف أن طلب المساعدة يتطلب شجاعة. هل يمكنك إخباري المزيد عما تمر به؟',
       response2: 'التعافي رحلة وليس وجهة. كل خطوة للأمام مهمة مهما كانت صغيرة. ما الخطوة الأولى التي تشعر أنها ممكنة؟',
       response3: 'مشاعرك صحيحة. كثير من الناس في طريق التعافي يمرون بتحديات مماثلة. هل تريد استكشاف بعض استراتيجيات التأقلم معاً؟',
@@ -204,7 +204,7 @@ const translations: Record<Language, TranslationKeys> = {
       title1: 'Votre cerveau peut',
       title2: 'se guérir',
       title3: 'Laissez-nous vous montrer comment',
-      description: "Amal combine la technologie IA avec la science de l'addiction pour guider votre rétablissement. Gratuit, confidentiel, dans votre langue.",
+      description: "IQLAA combine la technologie IA avec la science de l'addiction pour guider votre rétablissement. Gratuit, confidentiel, dans votre langue.",
       cta: 'Commencer une conversation',
       crisis: 'Crise: 3033',
       evidenceBased: 'Basé sur des preuves',
@@ -238,7 +238,7 @@ const translations: Record<Language, TranslationKeys> = {
       sustained: 'Récupération soutenue',
       sustainedDesc: "La fonction cognitive s'améliore significativement.",
     },
-    chat: { title: 'Des conversations qui', titleHighlight: 'éduquent et soutiennent', description: 'Amal explique la science et vous aide à comprendre votre rétablissement.' },
+    chat: { title: 'Des conversations qui', titleHighlight: 'éduquent et soutiennent', description: 'IQLAA explique la science et vous aide à comprendre votre rétablissement.' },
     features: {
       title: 'Construit pour',
       titleHighlight: 'un vrai rétablissement',
@@ -257,8 +257,8 @@ const translations: Record<Language, TranslationKeys> = {
     },
     stats: { affected: 'Algériens touchés', recovery: 'Récupération possible', available: 'Toujours disponible', free: 'Totalement gratuit' },
     crisis: { title: "En crise? Vous n'êtes pas seul.", description: 'Si vous souffrez de sevrage sévère ou de pensées suicidaires, appelez immédiatement.', cta: 'Appelez 3033 maintenant', note: 'Appel gratuit, confidentiel, 24/7' },
-    cta: { badge: 'Votre rétablissement commence maintenant', title: 'Prêt à comprendre votre cerveau?', description: "Chaque conversation avec Amal est un pas vers la compréhension de l'addiction.", button: 'Commencer à apprendre' },
-    footer: { description: "Soutien alimenté par l'IA pour le rétablissement en Algérie.", support: 'Soutien', startChat: 'Commencer le chat', crisisLine: 'Ligne de crise: 3033', resources: 'Ressources', learn: 'Apprendre', addictionScience: "Science de l'addiction", recoveryStages: 'Étapes de récupération', copingTechniques: "Techniques d'adaptation", languages: 'Langues', copyright: "© 2024 Amal. Fait avec science et espoir pour l'Algérie.", tagline: 'Pour les Algériens, par les Algériens' },
+    cta: { badge: 'Votre rétablissement commence maintenant', title: 'Prêt à comprendre votre cerveau?', description: "Chaque conversation avec IQLAA est un pas vers la compréhension de l'addiction.", button: 'Commencer à apprendre' },
+    footer: { description: "Soutien alimenté par l'IA pour le rétablissement en Algérie.", support: 'Soutien', startChat: 'Commencer le chat', crisisLine: 'Ligne de crise: 3033', resources: 'Ressources', learn: 'Apprendre', addictionScience: "Science de l'addiction", recoveryStages: 'Étapes de récupération', copingTechniques: "Techniques d'adaptation", languages: 'Langues', copyright: "© 2024 IQLAA. Fait avec science et espoir pour l'Algérie.", tagline: 'Pour les Algériens, par les Algériens' },
     auth: {
       welcomeBack: 'Bon retour', signInContinue: 'Connectez-vous pour continuer', email: 'Email', password: 'Mot de passe', rememberMe: 'Se souvenir de moi', forgotPassword: 'Mot de passe oublié?', signIn: 'Se connecter', signingIn: 'Connexion...', orContinue: 'ou continuer avec', noAccount: "Pas de compte?", signUp: "S'inscrire",
       createAccount: 'Créer votre compte', startJourney: 'Commencez votre parcours de rétablissement', fullName: 'Nom complet', confirmPassword: 'Confirmer le mot de passe', passwordsNoMatch: 'Les mots de passe ne correspondent pas', agreeTerms: "J'accepte les", terms: "Conditions d'utilisation", privacy: 'Politique de confidentialité', creatingAccount: 'Création du compte...', haveAccount: 'Déjà un compte?',
@@ -266,9 +266,9 @@ const translations: Record<Language, TranslationKeys> = {
       chars8: 'Au moins 8 caractères', uppercase: 'Une lettre majuscule', oneNumber: 'Un chiffre',
     },
     chatPage: {
-      title: 'Assistant Amal', status: 'Toujours là pour vous', private: 'Votre conversation est privée et sécurisée', thinking: 'Amal réfléchit...', placeholder: 'Tapez votre message...', crisis: 'En crise? Appelez', suggested: 'Sujets suggérés:',
+      title: 'Assistant IQLAA', status: 'Toujours là pour vous', private: 'Votre conversation est privée et sécurisée', thinking: 'IQLAA réfléchit...', placeholder: 'Tapez votre message...', crisis: 'En crise? Appelez', suggested: 'Sujets suggérés:',
       prompt1: 'Je veux parler de mes difficultés', prompt2: 'Comment gérer les envies?', prompt3: "J'ai besoin de quelqu'un qui écoute", prompt4: 'Parlez-moi des ressources de rétablissement',
-      welcome: "Bienvenue sur Amal. Je suis là pour vous soutenir dans votre parcours de rétablissement. Tout ce que vous partagez est confidentiel. Comment vous sentez-vous aujourd'hui?",
+      welcome: "Bienvenue sur IQLAA. Je suis là pour vous soutenir dans votre parcours de rétablissement. Tout ce que vous partagez est confidentiel. Comment vous sentez-vous aujourd'hui?",
       response1: "Je vous entends, et je veux que vous sachiez que demander de l'aide demande du courage. Pouvez-vous m'en dire plus sur ce que vous vivez?",
       response2: "Le rétablissement est un voyage, pas une destination. Chaque pas en avant compte, aussi petit soit-il. Quelle serait une première étape gérable pour vous?",
       response3: "Vos sentiments sont valides. Beaucoup de personnes sur le chemin du rétablissement vivent des défis similaires. Voulez-vous explorer ensemble des stratégies d'adaptation?",
@@ -284,7 +284,7 @@ const translations: Record<Language, TranslationKeys> = {
       title1: 'مخك يقدر',
       title2: 'يبرا وحدو',
       title3: 'خلينا نوريوك كيفاش',
-      description: 'أمل يجمع بين الذكاء الاصطناعي وعلم الإدمان باش يساعدك تتعافى. مجاني، سري، بلغتك.',
+      description: 'إقلاع يجمع بين الذكاء الاصطناعي وعلم الإدمان باش يساعدك تتعافى. مجاني، سري، بلغتك.',
       cta: 'ابدا محادثة التعافي',
       crisis: 'خط الأزمات: 3033',
       evidenceBased: 'مبني على العلم',
@@ -318,7 +318,7 @@ const translations: Record<Language, TranslationKeys> = {
       sustained: 'التعافي المستمر',
       sustainedDesc: 'التفكير يتحسن بزاف.',
     },
-    chat: { title: 'هدرة', titleHighlight: 'تعلم وتدعم', description: 'أمل يشرحلك العلم ويساعدك تفهم تعافيك.' },
+    chat: { title: 'هدرة', titleHighlight: 'تعلم وتدعم', description: 'إقلاع يشرحلك العلم ويساعدك تفهم تعافيك.' },
     features: {
       title: 'مبني من أجل',
       titleHighlight: 'تعافي حقيقي',
@@ -337,8 +337,8 @@ const translations: Record<Language, TranslationKeys> = {
     },
     stats: { affected: 'جزائريين متأثرين', recovery: 'التعافي ممكن', available: 'متاح ديما', free: 'مجاني بالكامل' },
     crisis: { title: 'في أزمة؟ ماكش وحدك.', description: 'إذا راك تعاني من انسحاب شديد ولا أفكار سوداء، عيط فيسع.', cta: 'عيط لـ 3033 دروك', note: 'مكالمة مجانية، سرية، 24/7' },
-    cta: { badge: 'تعافيك يبدا دروك', title: 'مستعد تفهم مخك؟', description: 'كل هدرة مع أمل هي خطوة باش تفهم الإدمان.', button: 'ابدا تتعلم على التعافي' },
-    footer: { description: 'دعم بالذكاء الاصطناعي للتعافي في الجزائر.', support: 'الدعم', startChat: 'ابدا الهدرة', crisisLine: 'خط الأزمات: 3033', resources: 'الموارد', learn: 'تعلم', addictionScience: 'علم الإدمان', recoveryStages: 'مراحل التعافي', copingTechniques: 'طرق التأقلم', languages: 'اللغات', copyright: '© 2024 أمل. مصنوع بالعلم والأمل للجزائر.', tagline: 'للجزائريين، من الجزائريين' },
+    cta: { badge: 'تعافيك يبدا دروك', title: 'مستعد تفهم مخك؟', description: 'كل هدرة مع إقلاع هي خطوة باش تفهم الإدمان.', button: 'ابدا تتعلم على التعافي' },
+    footer: { description: 'دعم بالذكاء الاصطناعي للتعافي في الجزائر.', support: 'الدعم', startChat: 'ابدا الهدرة', crisisLine: 'خط الأزمات: 3033', resources: 'الموارد', learn: 'تعلم', addictionScience: 'علم الإدمان', recoveryStages: 'مراحل التعافي', copingTechniques: 'طرق التأقلم', languages: 'اللغات', copyright: '© 2024 إقلاع. مصنوع بالعلم والأمل للجزائر.', tagline: 'للجزائريين، من الجزائريين' },
     auth: {
       welcomeBack: 'مرحبا بيك', signInContinue: 'ادخل باش تكمل رحلتك', email: 'الإيميل', password: 'كلمة السر', rememberMe: 'تفكرني', forgotPassword: 'نسيت كلمة السر؟', signIn: 'دخول', signingIn: 'راني ندخل...', orContinue: 'ولا كمل بـ', noAccount: 'ماعندكش حساب؟', signUp: 'سجل',
       createAccount: 'أنشئ حسابك', startJourney: 'ابدا رحلتك للتعافي', fullName: 'الاسم الكامل', confirmPassword: 'أكد كلمة السر', passwordsNoMatch: 'كلمات السر ماشي كيف كيف', agreeTerms: 'نوافق على', terms: 'شروط الخدمة', privacy: 'سياسة الخصوصية', creatingAccount: 'راني نخلق الحساب...', haveAccount: 'عندك حساب؟',
@@ -346,9 +346,9 @@ const translations: Record<Language, TranslationKeys> = {
       chars8: '8 حروف على الأقل', uppercase: 'حرف كبير واحد', oneNumber: 'رقم واحد',
     },
     chatPage: {
-      title: 'مساعد أمل', status: 'ديما هنا معاك', private: 'الهدرة تاعك خاصة وآمنة', thinking: 'أمل راه يفكر...', placeholder: 'اكتب الرسالة تاعك...', crisis: 'في أزمة؟ عيط لـ', suggested: 'مواضيع مقترحة:',
+      title: 'مساعد إقلاع', status: 'ديما هنا معاك', private: 'الهدرة تاعك خاصة وآمنة', thinking: 'إقلاع راه يفكر...', placeholder: 'اكتب الرسالة تاعك...', crisis: 'في أزمة؟ عيط لـ', suggested: 'مواضيع مقترحة:',
       prompt1: 'نحب نهدر على المشاكل تاعي', prompt2: 'كيفاش نتعامل مع الرغبات؟', prompt3: 'نحتاج واحد يسمعني', prompt4: 'قولي على موارد التعافي',
-      welcome: 'مرحبا بيك في أمل. راني هنا باش نساعدك في رحلة التعافي. كلش سري. كيراك اليوم؟',
+      welcome: 'مرحبا بيك في إقلاع. راني هنا باش نساعدك في رحلة التعافي. كلش سري. كيراك اليوم؟',
       response1: 'راني نسمعك، وحبيت نقولك بلي طلب المساعدة يحتاج شجاعة. تقدر تقولي أكثر على واش راك تحس؟',
       response2: 'التعافي رحلة ماشي وجهة. كل خطوة للقدام مهمة مهما كانت صغيرة. واش هي الخطوة الأولى اللي تحس بلي تقدر تديرها؟',
       response3: 'المشاعر تاعك صحيحة. بزاف ناس في طريق التعافي يمرو بنفس التحديات. تحب نستكشفو مع بعض طرق التأقلم؟',
@@ -362,7 +362,7 @@ const translations: Record<Language, TranslationKeys> = {
 // Get saved language from localStorage
 const getSavedLanguage = (): Language => {
   if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem('amal-language');
+    const saved = localStorage.getItem('iqlaa-language');
     if (saved && ['en', 'ar', 'fr', 'dz'].includes(saved)) {
       return saved as Language;
     }
@@ -386,7 +386,7 @@ export const useLanguageStore = create<LanguageStore>()(
   subscribeWithSelector((set) => ({
     language: getSavedLanguage(),
     setLanguage: (lang: Language) => {
-      localStorage.setItem('amal-language', lang);
+      localStorage.setItem('iqlaa-language', lang);
       document.documentElement.dir = languages[lang].dir;
       document.documentElement.lang = lang;
       set({ language: lang });

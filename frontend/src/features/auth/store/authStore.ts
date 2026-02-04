@@ -182,7 +182,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: 'amal-auth',
+      name: 'iqlaa-auth',
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,

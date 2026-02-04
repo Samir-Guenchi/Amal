@@ -10,7 +10,7 @@ interface LanguageState {
 
 export const translations = {
   // App
-  appName: { en: 'Amal', ar: 'أمل', fr: 'Amal', dz: 'أمل' },
+  appName: { en: 'IQLAA', ar: 'إقلاع', fr: 'IQLAA', dz: 'إقلاع' },
   
   // Navigation
   home: { en: 'Home', ar: 'الرئيسية', fr: 'Accueil', dz: 'الرئيسية' },
@@ -19,7 +19,7 @@ export const translations = {
   settings: { en: 'Settings', ar: 'الإعدادات', fr: 'Paramètres', dz: 'الإعدادات' },
   
   // Home
-  welcome: { en: 'Welcome to Amal', ar: 'مرحباً بك في أمل', fr: 'Bienvenue sur Amal', dz: 'مرحبا بيك في أمل' },
+  welcome: { en: 'Welcome to IQLAA', ar: 'مرحباً بك في إقلاع', fr: 'Bienvenue sur IQLAA', dz: 'مرحبا بيك في إقلاع' },
   tagline: { en: 'Your companion in recovery', ar: 'رفيقك في رحلة التعافي', fr: 'Votre compagnon de rétablissement', dz: 'رفيقك في رحلة التعافي' },
   startChat: { en: 'Start a conversation', ar: 'ابدأ محادثة', fr: 'Commencer une conversation', dz: 'ابدا هدرة' },
   
